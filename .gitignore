@@ -1,0 +1,28 @@
+
+# Ignorar arquivos de compilação
+bin/
+obj/
+
+# Ignorar arquivos temporários gerados pelo Visual Studio
+.vs/
+*.user
+*.suo
+
+# Ignorar arquivos gerados pelo sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de configuração de IDEs
+.idea/
+*.iml
+
+# Ignorar pacotes NuGet restaurados
+packages/
+*.nupkg
+*.snupkg
+
+# Ignorar arquivos de logs
+*.log
+
+# Ignorar diretórios do cache
+node_modules/

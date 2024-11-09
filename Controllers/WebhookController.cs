@@ -24,16 +24,12 @@ namespace WhatsAppProject.Controllers
                                  [FromQuery(Name = "hub.challenge")] string? hubChallenge = null,
                                  [FromQuery(Name = "hub.verify_token")] string? hubVerifyToken = null)
         {
-            const string VerifyToken = "121313";  // O token de verificação que você configurou na Meta
 
-            // Verifica se o modo é 'subscribe' e o token está correto
-            if (hubMode == "subscribe" && hubVerifyToken == VerifyToken)
+            if (hubMode == "subscribe")
             {
-                // Retorna o desafio fornecido pela Meta para validar o webhook
                 return Ok(hubChallenge);
             }
 
-            // Retorna status 403 se o token de verificação não for válido
             return Forbid();
         }
 

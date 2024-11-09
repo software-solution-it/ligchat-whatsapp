@@ -13,11 +13,11 @@ namespace WhatsAppProject.Services
 {
     public class WhatsAppService
     {
-        private readonly WhatsAppContext _context; // Contexto para mensagens
-        private readonly SaasDbContext _saasContext; // Contexto para acessar o setor
+        private readonly WhatsAppContext _context; 
+        private readonly SaasDbContext _saasContext;
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-        private readonly WebSocketManager _webSocketManager; // WebSocketManager
+        private readonly WebSocketManager _webSocketManager;
 
         public WhatsAppService(
             WhatsAppContext context,
@@ -61,17 +61,15 @@ namespace WhatsAppProject.Services
             var json = JsonSerializer.Serialize(payload);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            // Obtém as credenciais do WhatsApp
             var credentials = await GetWhatsAppCredentialsBySectorIdAsync(messageDto.SectorId);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", credentials.AccessToken);
 
             var response = await _httpClient.PostAsync($"https://graph.facebook.com/v20.0/{credentials.PhoneNumberId}/messages", content);
             response.EnsureSuccessStatusCode();
 
-            // Salva a mensagem no banco de dados
             await _context.SaveChangesAsync();
 
-            // Enviar a mensagem para o frontend via WebSocket
+
             var messageJson = JsonSerializer.Serialize(new
             {
                 Content = messageDto.Content,
@@ -81,29 +79,24 @@ namespace WhatsAppProject.Services
                 ContactID = messageDto.ContactId
             });
 
-            // Enviar mensagem para o setor específico
             await _webSocketManager.SendMessageToSectorAsync(messageDto.SectorId.ToString(), messageJson);
         }
 
-        // Upload de mídia para o S3
         public async Task<string> UploadMediaToS3Async(string base64File, string mediaType, string originalFileName)
         {
             var awsAccessKey = _configuration["AWS:AccessKey"];
             var awsSecretKey = _configuration["AWS:SecretKey"];
             var awsBucketName = _configuration["AWS:BucketName"];
-            var awsRegion = "sa-east-1";
+            var awsRegion = "us-east-2";
 
             var s3Client = new AmazonS3Client(awsAccessKey, awsSecretKey, Amazon.RegionEndpoint.GetBySystemName(awsRegion));
 
-            // Decodificar o base64 para bytes
             var fileBytes = Convert.FromBase64String(base64File);
             var tempInputPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}");
             await File.WriteAllBytesAsync(tempInputPath, fileBytes);
 
-            // Se o tipo de mídia não for suportado, não processe com FFmpeg
             if (!IsSupportedAudioFormat(mediaType))
             {
-                // Realiza o upload diretamente sem conversão
                 var transferUtility = new TransferUtility(s3Client);
                 var fileTransferRequest = new TransferUtilityUploadRequest
                 {
@@ -114,23 +107,19 @@ namespace WhatsAppProject.Services
                 };
 
                 await transferUtility.UploadAsync(fileTransferRequest);
-                return $"https://{awsBucketName}.s3.amazonaws.com/{Path.GetFileName(tempInputPath)}"; // Retorna a URL do arquivo
+                return $"https://{awsBucketName}.s3.amazonaws.com/{Path.GetFileName(tempInputPath)}"; 
             }
 
-            // Definir o caminho de saída para o arquivo convertido
             var tempOutputPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.opus");
 
             try
             {
-                // Inicializa o FFmpeg
                 FFmpeg.SetExecutablesPath(@"C:/Program Files/ffmpeg/bin/");
 
-                // Converter o arquivo de Vorbis para Opus
                 await FFmpeg.Conversions.New()
                     .AddParameter($"-i \"{tempInputPath}\" -c:a libopus \"{tempOutputPath}\"", ParameterPosition.PreInput)
                     .Start();
 
-                // Upload do arquivo convertido para o S3
                 var transferUtility = new TransferUtility(s3Client);
                 var fileTransferRequest = new TransferUtilityUploadRequest
                 {
@@ -142,12 +131,10 @@ namespace WhatsAppProject.Services
 
                 await transferUtility.UploadAsync(fileTransferRequest);
 
-                // Retorna a URL do arquivo no S3
                 return $"https://{awsBucketName}.s3.amazonaws.com/{Path.GetFileName(tempOutputPath)}";
             }
             finally
             {
-                // Limpa os arquivos temporários
                 if (File.Exists(tempInputPath))
                     File.Delete(tempInputPath);
 
@@ -157,13 +144,11 @@ namespace WhatsAppProject.Services
         }
         public async Task<object> SendMediaAsync(SendFileDto sendFileDto)
         {
-            // Passo 1: Upload do arquivo base64 para o S3
             var fileUrl = await UploadMediaToS3Async(sendFileDto.Base64File, sendFileDto.MediaType, sendFileDto.FileName);
 
             var mediaType = MapMimeTypeToMediaType(sendFileDto.MediaType);
             var credentials = await GetWhatsAppCredentialsBySectorIdAsync(sendFileDto.SectorId);
 
-            // Cria a nova mensagem para salvar no banco de dados
             var message = new Messages
             {
                 Content = sendFileDto.Caption,
@@ -177,13 +162,10 @@ namespace WhatsAppProject.Services
 
             await _context.Messages.AddAsync(message);
 
-            // Enviar a mensagem com a mídia
             await SendMediaMessageAsync(fileUrl, sendFileDto.Recipient, mediaType, sendFileDto.FileName, sendFileDto.Caption, sendFileDto.SectorId);
 
-            // Salva a mensagem no banco de dados
             await _context.SaveChangesAsync();
 
-            // Enviar a mensagem com mídia para o frontend via WebSocket
             var mediaMessageJson = JsonSerializer.Serialize(new
             {
                 Content = sendFileDto.Caption,
@@ -196,7 +178,6 @@ namespace WhatsAppProject.Services
 
             await _webSocketManager.SendMessageToSectorAsync(sendFileDto.SectorId.ToString(), mediaMessageJson);
 
-            // Retorna as informações da mídia salva
             return new
             {
                 Content = sendFileDto.Caption,
@@ -209,16 +190,13 @@ namespace WhatsAppProject.Services
             };
         }
 
-        // Método auxiliar para gerar um hash aleatório
         private string GenerateRandomHash()
         {
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
-                // Gerar um GUID e transformá-lo em bytes
                 byte[] bytes = System.Text.Encoding.UTF8.GetBytes(Guid.NewGuid().ToString());
                 byte[] hashBytes = sha256.ComputeHash(bytes);
 
-                // Converter o hash em string hexadecimal
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
         }

@@ -4,7 +4,6 @@ using System.Threading;
 
 public class WebSocketManager
 {
-    // Mapeia setores para WebSockets, permitindo múltiplos clientes por setor
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<WebSocket, bool>> _clients = new ConcurrentDictionary<string, ConcurrentDictionary<WebSocket, bool>>();
 
     public void AddClient(string sectorId, WebSocket webSocket)
@@ -26,7 +25,7 @@ public class WebSocketManager
             var buffer = System.Text.Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
 
-            var client = clientDict.Keys.FirstOrDefault(); // Obtém o único cliente
+            var client = clientDict.Keys.FirstOrDefault();
             if (client != null && client.State == WebSocketState.Open)
             {
                 await client.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
@@ -45,7 +44,7 @@ public class WebSocketManager
                 {
                     Console.WriteLine($"Client removed from sector {entry.Key}. Total clients in sector: {clientDict.Count}");
                 }
-                break; // Removido com sucesso
+                break; 
             }
         }
     }

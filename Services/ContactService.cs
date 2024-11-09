@@ -28,7 +28,6 @@ namespace WhatsAppProject.Services
         {
             var contacts = await _context.Contacts.ToListAsync();
 
-            // Divide o parâmetro tagId em uma lista de IDs
             var tagIdsToFind = tagId.Split(',');
 
             return contacts
@@ -47,7 +46,7 @@ namespace WhatsAppProject.Services
         {
             Contacts contact;
 
-            if (contactDto.Id == 0) // Novo contato
+            if (contactDto.Id == 0) 
             {
                 contact = new Contacts
                 {
@@ -55,8 +54,7 @@ namespace WhatsAppProject.Services
                     PhoneNumber = contactDto.PhoneNumber,
                     ProfilePictureUrl = contactDto.ProfilePictureUrl,
                     SectorId = contactDto.SectorId,
-                    // Agora estamos lidando com uma lista de TagIds
-                    TagIds = contactDto.TagIds, // Certifique-se de que a propriedade existe
+                    TagIds = contactDto.TagIds, 
                     Status = contactDto.Status,
                     Address = contactDto.Address,
                     Email = contactDto.Email,
@@ -65,7 +63,7 @@ namespace WhatsAppProject.Services
 
                 await _context.Contacts.AddAsync(contact);
             }
-            else // Atualizar contato existente
+            else
             {
                 contact = await GetContactByIdAsync(contactDto.Id);
 
@@ -75,7 +73,7 @@ namespace WhatsAppProject.Services
                     contact.PhoneNumber = contactDto.PhoneNumber;
                     contact.ProfilePictureUrl = contactDto.ProfilePictureUrl;
                     contact.SectorId = contactDto.SectorId;
-                    contact.TagIds = contactDto.TagIds; // Atualiza a lista de TagIds
+                    contact.TagIds = contactDto.TagIds; 
                     contact.Status = contactDto.Status;
                     contact.Address = contactDto.Address;
                     contact.Email = contactDto.Email;
@@ -86,7 +84,7 @@ namespace WhatsAppProject.Services
             }
 
             await _context.SaveChangesAsync();
-            return contact; // Retorna o contato criado ou atualizado
+            return contact; 
         }
 
         public async Task DeleteContactAsync(int id)
@@ -102,7 +100,7 @@ namespace WhatsAppProject.Services
         public async Task<List<Messages>> GetMessagesByContactIdAsync(int contactId)
         {
             return await _context.Messages
-                .Where(m => m.ContactID == contactId) // Filtra mensagens pelo contact_id
+                .Where(m => m.ContactID == contactId) 
                 .ToListAsync();
         }
     }

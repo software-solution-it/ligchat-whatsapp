@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Eon.Backend.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using WhatsAppProject.Entities;
 using WhatsAppProject.Entities.WhatsAppProject.Entities;
 
@@ -22,6 +23,8 @@ namespace WhatsAppProject.Data
         public DbSet<ContactFlowStatus> ContactFlowStatus { get; set; } // Adiciona o controle de status de fluxo
         public DbSet<MessageScheduling> MessageScheduling { get; set; }
         public DbSet<Tag> Tags { get; set; }
+
+        public DbSet<Webhook> Webhooks { get; set; }
 
         public DbSet<Contacts> Contacts { get; set; }
 

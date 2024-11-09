@@ -18,13 +18,19 @@ namespace WhatsAppProject.Services
         private readonly MongoDbContext _mongoDbContext;
         private readonly ContactService _contactService;
         private readonly WhatsAppService _whatsappService;
+        private readonly WebhookService _webhookService; // Adiciona o WebhookService
 
-        public MessageSchedulingService(SaasDbContext context, MongoDbContext mongoDbContext, ContactService contactService, WhatsAppService whatsappService)
+        public MessageSchedulingService(SaasDbContext context,
+                                        MongoDbContext mongoDbContext,
+                                        ContactService contactService,
+                                        WhatsAppService whatsappService,
+                                        WebhookService webhookService) // Adiciona WebhookService no construtor
         {
             _saasContext = context;
             _mongoDbContext = mongoDbContext;
             _contactService = contactService;
             _whatsappService = whatsappService;
+            _webhookService = webhookService; // Inicializa o WebhookService
         }
 
         public async Task ScheduleAllMessagesAsync()
@@ -108,7 +114,6 @@ namespace WhatsAppProject.Services
 
                     if (flow != null)
                     {
-                        // Se CurrentNodeId estiver vazio, defina como o primeiro nó, mas não envie mensagem ainda
                         if (string.IsNullOrEmpty(contactFlowStatus.CurrentNodeId))
                         {
                             var firstNode = flow.Nodes.FirstOrDefault();
@@ -117,8 +122,6 @@ namespace WhatsAppProject.Services
                                 contactFlowStatus.CurrentNodeId = firstNode.Id;
                                 _saasContext.ContactFlowStatus.Update(contactFlowStatus);
                                 _saasContext.SaveChanges();
-
-                                // Não enviar mensagem aqui, apenas definir o nó atual
                             }
                         }
                         else
@@ -157,17 +160,14 @@ namespace WhatsAppProject.Services
 
         private void WaitForUserResponse(Contacts contact, FlowDTO flow, ContactFlowStatus contactFlowStatus)
         {
-            // Achar o índice do nó atual no fluxo
             var currentNodeIndex = flow.Nodes.FindIndex(node => node.Id == contactFlowStatus.CurrentNodeId);
 
-            // Pular o primeiro nó, que é sempre o início
             if (string.IsNullOrEmpty(contactFlowStatus.CurrentNodeId))
             {
-                currentNodeIndex = 0; // Começar do primeiro nó
+                currentNodeIndex = 0;
             }
             else
             {
-                // Mover para o próximo nó, ignorando o primeiro
                 currentNodeIndex += 1;
             }
 
@@ -204,6 +204,8 @@ namespace WhatsAppProject.Services
         {
             var messageDto = MapToMessageDto(message, contact);
             await _whatsappService.SendMessageAsync(messageDto);
+
+            await _webhookService.TriggerWebhookEventAsync(message.SectorId ?? 0, messageDto);
 
             if (message.FileAttachment != null || message.FileMimeType != null || message.FileName != null)
             {

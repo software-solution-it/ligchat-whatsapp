@@ -7,16 +7,15 @@ namespace WhatsAppProject.Services
 {
     public class WhatsAppCredentialsService
     {
-        private readonly SaasDbContext _saasContext; // Alterado para o novo contexto
+        private readonly SaasDbContext _saasContext;
 
         public WhatsAppCredentialsService(SaasDbContext saasContext)
         {
-            _saasContext = saasContext; // Inicializa o contexto SaaS
+            _saasContext = saasContext; 
         }
 
         public async Task<Sector> GetCredentialsAsync(int sectorId)
         {
-            // Busca as credenciais com base no sectorId
             return await _saasContext.Sector
                 .FirstOrDefaultAsync(c => c.Id == sectorId);
         }
@@ -27,7 +26,6 @@ namespace WhatsAppProject.Services
 
             if (credentials == null)
             {
-                // Insere novas credenciais se não houver nenhuma para o setor
                 credentials = new Sector
                 {
                     PhoneNumberId = phoneNumber,
@@ -38,7 +36,6 @@ namespace WhatsAppProject.Services
             }
             else
             {
-                // Atualiza as credenciais existentes
                 credentials.PhoneNumberId = phoneNumber;
                 credentials.AccessToken = accessToken;
                 _saasContext.Sector.Update(credentials);

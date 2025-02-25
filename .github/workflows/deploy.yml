@@ -49,8 +49,6 @@ jobs:
           echo "Verificando o status do repositório..." &&
           git status &&
           echo "Stash das alterações não comitadas..." &&
-          git stash &&
-          echo "Puxando as últimas alterações do repositório..." &&
           git pull origin main &&
           echo "Removendo arquivos de configuração antigos..." &&
           rm -f WhatsAppProject.deps.json &&

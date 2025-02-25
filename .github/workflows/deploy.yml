@@ -43,7 +43,7 @@ jobs:
           git config --global user.name "Deploy Bot" &&
           git stash &&
           git pull origin main &&
-          rm -f WhatsAppProject.deps.json &&
+          rm -f WhatsAppProject.deps.json && 
           rm -f WhatsAppProject.runtimeconfig.json &&
           rm -rf obj/Release/net8.0/* &&
           rm -rf bin/Release/net8.0/* &&

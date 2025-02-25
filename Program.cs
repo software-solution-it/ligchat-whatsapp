@@ -9,8 +9,20 @@ using WhatsAppProject.Data;
 using WhatsAppProject.Services;
 using Hangfire.MySql;
 using MongoDB.Driver;
+using Microsoft.Extensions.FileProviders;
+using Serilog;
+using System.IO;
+using WhatsAppProject;
+using Xabe.FFmpeg;
+using Microsoft.AspNetCore.SignalR;
+using WhatsAppProject.Hubs;
+using WhatsAppProject.Middleware;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar a porta
+builder.WebHost.UseUrls("http://localhost:5001");
 
 builder.Services.AddCors(options =>
 {
@@ -85,29 +97,150 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "WhatsApp API", Version = "v1" });
 });
 
+// Configurar Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File(
+        Path.Combine("logs", "log-.txt"),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        fileSizeLimitBytes: 10 * 1024 * 1024,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// Configurar logging adicional
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+// Configurar nível de log detalhado para seu namespace
+builder.Logging.AddFilter("WhatsAppProject", LogLevel.Debug);
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information);
+
+// Registrar serviços
+builder.Services.AddLogging();
+
+// Registrar o handler do WebSocket
+builder.Services.AddScoped<WebSocketConnectionHandler>(); 
+
+// Registrar o DbContext
+builder.Services.AddDbContext<WhatsAppContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Registrar os serviços
+builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<WebhookService>();
+
+builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
+
+// Configurar FFmpeg
+string ffmpegPath = @"C:\Program Files\ffmpeg\bin";
+FFmpeg.SetExecutablesPath(ffmpegPath);
+
+// Registrar o caminho do FFmpeg na configuração para uso posterior
+builder.Configuration["FFmpeg:ExecutablesPath"] = ffmpegPath;
+
+// Adicionar SignalR
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
+// Configurar CORS antes dos arquivos estáticos
 app.UseCors("AllowAll");
 
-app.UseWebSockets();
+// Garantir que o diretório de uploads existe
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+Directory.CreateDirectory(uploadsPath); // Cria se não existir
+
+// Criar subdiretórios para cada tipo de mídia
+var mediaTypes = new[] { "image", "audio", "video", "application" };
+foreach (var mediaType in mediaTypes)
+{
+    Directory.CreateDirectory(Path.Combine(uploadsPath, mediaType));
+}
+
+// Configurar arquivos estáticos
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")),
+    RequestPath = "/uploads",
+    OnPrepareResponse = ctx =>
+    {
+        // Headers CORS
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET");
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "*");
+        
+        // Cache
+        ctx.Context.Response.Headers.Append("Cache-Control", "public, max-age=3600");
+    }
+});
+
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(2)
+});
 
 app.Use(async (context, next) =>
 {
     if (context.WebSockets.IsWebSocketRequest)
     {
-        var webSocketManager = context.RequestServices.GetRequiredService<WebSocketManager>();
-        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-
-        var sectorId = context.Request.Query["sectorId"];
-
-        if (!string.IsNullOrEmpty(sectorId)) 
+        try
         {
-            webSocketManager.AddClient(sectorId, webSocket); 
-            await Echo(context, webSocket, webSocketManager, sectorId); 
+            var webSocketManager = context.RequestServices.GetRequiredService<WebSocketManager>();
+            var webSocketHandler = context.RequestServices.GetRequiredService<WebSocketConnectionHandler>();
+            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+            
+            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            
+            var sectorId = context.Request.Query["sectorId"].ToString();
+            
+            if (string.IsNullOrEmpty(sectorId))
+            {
+                await webSocket.CloseAsync(
+                    WebSocketCloseStatus.InvalidPayloadData,
+                    "Sector ID is required.",
+                    CancellationToken.None);
+                return;
+            }
+
+            logger.LogInformation($"WebSocket connection established for sector: {sectorId}");
+            
+            webSocketManager.AddClient(sectorId, webSocket);
+            
+            try
+            {
+                await webSocketHandler.HandleConnection(context, webSocket, webSocketManager, sectorId);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"WebSocket error: {ex.Message}");
+            }
+            finally
+            {
+                webSocketManager.RemoveClient(webSocket);
+                
+                if (webSocket.State == WebSocketState.Open)
+                {
+                    await webSocket.CloseAsync(
+                        WebSocketCloseStatus.NormalClosure,
+                        "Closing connection.",
+                        CancellationToken.None);
+                }
+            }
         }
-        else
+        catch (Exception ex)
         {
-            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Sector ID is required.", CancellationToken.None);
+            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogError($"Error handling WebSocket request: {ex.Message}");
         }
     }
     else
@@ -115,28 +248,6 @@ app.Use(async (context, next) =>
         await next();
     }
 });
-
-async Task Echo(HttpContext context, WebSocket webSocket, WebSocketManager webSocketManager, string sectorId)
-{
-    var buffer = new byte[1024 * 4];
-    WebSocketReceiveResult result;
-
-    do
-    {
-        result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-
-        if (result.MessageType == WebSocketMessageType.Text)
-        {
-            var message = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"Received message: {message} from sector: {sectorId}");
-
-            await webSocketManager.SendMessageToSectorAsync(sectorId, message);
-        }
-    } while (!result.CloseStatus.HasValue);
-
-    webSocketManager.RemoveClient(webSocket);
-    await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-}
 
 app.UseHangfireDashboard();
 
@@ -164,4 +275,24 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
+
+// Mapear o hub
+app.MapHub<ChatHub>("/chatHub");
+
+// Adiciona o middleware de logging de exceções
+app.UseMiddleware<ExceptionLoggingMiddleware>();
+
+try
+{
+    Log.Information("Iniciando aplicação");
+    
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Aplicação terminou inesperadamente");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

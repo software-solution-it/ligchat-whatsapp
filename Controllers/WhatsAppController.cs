@@ -2,6 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using WhatsAppProject.Dtos;
 using WhatsAppProject.Services;
+using Microsoft.Extensions.Logging;
+using WhatsAppProject.Entities;
+using System;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace WhatsAppProject.Controllers
 {
@@ -9,50 +14,138 @@ namespace WhatsAppProject.Controllers
     [Route("whatsapp")]
     public class WhatsAppController : ControllerBase
     {
-        private readonly WhatsAppService _whatsappService;
+        private readonly IWhatsAppService _whatsAppService;
+        private readonly ILogger<WhatsAppController> _logger;
+        private readonly ContactService _contactService;
 
-        public WhatsAppController(WhatsAppService whatsappService)
+        public WhatsAppController(
+            IWhatsAppService whatsAppService, 
+            ILogger<WhatsAppController> logger,
+            ContactService contactService)
         {
-            _whatsappService = whatsappService;
+            _whatsAppService = whatsAppService;
+            _logger = logger;
+            _contactService = contactService;
+        }
+
+        [HttpGet("contacts/{sectorId}")]
+        public async Task<IActionResult> GetContacts(int sectorId)
+        {
+            _logger.LogInformation($"Recebendo requisição GET para /whatsapp/contacts/{sectorId}");
+            try
+            {
+                var contacts = await _contactService.GetContactsBySectorIdAsync(sectorId);
+                return Ok(contacts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao buscar contatos: {ex.Message}");
+                return StatusCode(500, "Erro ao buscar contatos");
+            }
+        }
+
+        [HttpGet("messages/{contactId}")]
+        public async Task<IActionResult> GetMessages(int contactId)
+        {
+            _logger.LogInformation($"Recebendo requisição GET para /whatsapp/messages/{contactId}");
+            try
+            {
+                var messages = await _contactService.GetMessagesByContactIdAsync(contactId);
+                return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao buscar mensagens: {ex.Message}");
+                return StatusCode(500, "Erro ao buscar mensagens");
+            }
         }
 
         [HttpPost("send-message")]
-        public async Task<IActionResult> SendMessage([FromBody] MessageDto messageDto)
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageDto message)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                _logger.LogInformation($"Recebida requisição de mensagem: {JsonConvert.SerializeObject(message)}");
+                var result = await _whatsAppService.SendTextMessageAsync(message);
+                
+                var response = new
+                {
+                    id = result.Id,
+                    content = result.Content,
+                    contactID = result.ContactID,
+                    sectorId = result.SectorId,
+                    sentAt = result.SentAt,
+                    isSent = result.IsSent,
+                    isRead = result.IsRead,
+                    mediaType = "text"
+                };
 
-            await _whatsappService.SendMessageAsync(messageDto);
-            return Ok(new { message = "Mensagem enviada com sucesso!" });
+                _logger.LogInformation($"Enviando resposta: {JsonConvert.SerializeObject(response)}");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao enviar mensagem: {ex.Message}");
+                return StatusCode(500, "Erro ao enviar mensagem");
+            }
         }
 
         [HttpPost("send-file")]
-        public async Task<IActionResult> SendFile([FromBody] Dtos.SendFileDto sendFileDto)
+        public async Task<IActionResult> SendFile([FromBody] SendFileDto file)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                _logger.LogInformation($"Recebida requisição de arquivo: {JsonConvert.SerializeObject(file)}");
+                var result = await _whatsAppService.SendFileMessageAsync(file);
+                
+                object response;
+                if (file.MediaType == "audio" || file.MediaType == "image")
+                {
+                    response = new
+                    {
+                        id = result.Id,
+                        content = result.Content,
+                        contactID = result.ContactID,
+                        sectorId = result.SectorId,
+                        sentAt = result.SentAt,
+                        isSent = result.IsSent,
+                        isRead = result.IsRead,
+                        mediaType = file.MediaType,
+                        mediaUrl = result.MediaUrl,
+                        fileName = result.FileName
+                    };
+                }
+                else
+                {
+                    response = new
+                    {
+                        id = result.Id,
+                        content = result.Content,
+                        contactID = result.ContactID,
+                        sectorId = result.SectorId,
+                        sentAt = result.SentAt,
+                        isSent = result.IsSent,
+                        isRead = result.IsRead,
+                        mediaType = "document",
+                        mediaUrl = (string)null,
+                        fileName = result.FileName,
+                        attachment = new
+                        {
+                            type = "document",
+                            url = result.MediaUrl,
+                            name = result.FileName
+                        }
+                    };
+                }
+
+                _logger.LogInformation($"Enviando resposta: {JsonConvert.SerializeObject(response)}");
+                return Ok(response);
             }
-
-            var mediaResponse = await _whatsappService.SendMediaAsync(sendFileDto);
-
-            return Ok(new
+            catch (Exception ex)
             {
-                message = "Arquivo enviado com sucesso!",
-                media = mediaResponse
-            });
+                _logger.LogError($"Erro ao enviar arquivo: {ex.Message}");
+                return StatusCode(500, "Erro ao enviar arquivo");
+            }
         }
-
-
-        public class WhatsAppMediaResponse
-        {
-            public string Id { get; set; }
-        }
-
-
     }
-
-
 }

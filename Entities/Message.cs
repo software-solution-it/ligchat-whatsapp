@@ -13,7 +13,7 @@ namespace WhatsAppProject.Entities
         public int Id { get; set; }
 
         [Column("conteudo")] // Define o nome da coluna em snake_case
-        public string Content { get; set; } // Conteúdo da mensagem
+        public string? Content { get; set; } // Conteúdo da mensagem
 
         [Column("tipo", TypeName = "varchar(50)")] // Tipo da mídia
         public string? MediaType { get; set; } // Tipo da mídia (imagem, vídeo, etc.)
@@ -21,13 +21,19 @@ namespace WhatsAppProject.Entities
         [Column("url", TypeName = "varchar(255)")] // URL da mídia 
         public string? MediaUrl { get; set; } // URL da mídia, se houver
 
+        [Column("nome_arquivo", TypeName = "varchar(255)")] // Novo campo
+        public string? FileName { get; set; }
+
+        [Column("mime_type", TypeName = "varchar(100)")] // Nova coluna
+        public string? MimeType { get; set; }
+
         [Column("id_setor")] // ID do setor que enviou a mensagem
         [Required]
         public int SectorId { get; set; } // ID do setor
 
         [Column("contato_id")] // ID do contato que recebeu a mensagem
         [Required]
-        public int? ContactID { get; set; } // ID do contato
+        public int ContactID { get; set; } // ID do contato
 
         [Column("data_envio")] // Data/hora em que a mensagem foi enviada
         public DateTime? SentAt { get; set; } // Data e hora do envio
@@ -35,9 +41,11 @@ namespace WhatsAppProject.Entities
         [Column("enviado")] // Indica se a mensagem foi enviada
         public bool IsSent { get; set; } = false; // Padrão é false
 
+        [Column("lido")] // Nova coluna para indicar se a mensagem foi lida
+        public bool IsRead { get; set; } = false; // Padrão é false
 
         [JsonIgnore]
         [ForeignKey("ContactID")]
-        public virtual Contacts Contact { get; set; }
+        public virtual Contacts? Contact { get; set; }
     }
 }

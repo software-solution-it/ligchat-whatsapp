@@ -1,0 +1,52 @@
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore WhatsAppProject.csproj
+      
+    - name: Clean Project
+      run: dotnet clean WhatsAppProject.csproj --configuration Release
+      
+    - name: Build
+      run: dotnet build WhatsAppProject.csproj --no-restore --configuration Release
+      
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 3.90.210.19 >> ~/.ssh/known_hosts
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
+        
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no root@3.90.210.19 '
+          cd /var/www/ligchat-whatsapp &&
+          git config --global --add safe.directory /var/www/ligchat-whatsapp &&
+          git config --global user.email "deploy@example.com" &&
+          git config --global user.name "Deploy Bot" &&
+          git stash &&
+          git pull origin main &&
+          rm -f WhatsAppProject.deps.json &&
+          rm -f WhatsAppProject.runtimeconfig.json &&
+          rm -rf obj/Release/net8.0/* &&
+          rm -rf bin/Release/net8.0/* &&
+          dotnet publish WhatsAppProject.csproj -c Release -o /var/www/ligchat-whatsapp/bin/Release/net8.0/ &&
+          systemctl restart ligchat-whatsapp.service
+        ' 

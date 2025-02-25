@@ -1,0 +1,108 @@
+﻿[25/09/24 20:05:48] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[25/09/24 20:05:48] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[25/09/24 20:05:48] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[25/09/24 20:05:48] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.13.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[25/09/24 20:05:48] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[25/09/24 20:05:48] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.13.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[25/09/24 20:05:48] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[25/09/24 20:05:48] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[25/09/24 20:05:48] info: Program: Finished Squirrel Updater
+[26/09/24 12:20:45] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[26/09/24 12:20:45] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[26/09/24 12:20:45] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[26/09/24 12:20:45] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.14.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[26/09/24 12:20:45] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[26/09/24 12:20:45] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.14.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[26/09/24 12:20:45] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[26/09/24 12:20:45] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[26/09/24 12:20:45] info: Program: Finished Squirrel Updater
+[04/10/24 15:30:37] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[04/10/24 15:30:37] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[04/10/24 15:30:38] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[04/10/24 15:30:38] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.15.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[04/10/24 15:30:38] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[04/10/24 15:30:38] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.15.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[04/10/24 15:30:38] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[04/10/24 15:30:38] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[04/10/24 15:30:38] info: Program: Finished Squirrel Updater
+[13/10/24 01:42:15] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[13/10/24 01:42:15] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[13/10/24 01:42:15] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[13/10/24 01:42:15] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.16.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[13/10/24 01:42:15] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[13/10/24 01:42:15] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.16.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[13/10/24 01:42:15] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[13/10/24 01:42:15] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[13/10/24 01:42:15] info: Program: Finished Squirrel Updater
+[16/10/24 23:34:08] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[16/10/24 23:34:08] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[16/10/24 23:34:08] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[16/10/24 23:34:08] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.17.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[16/10/24 23:34:08] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[16/10/24 23:34:08] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.17.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[16/10/24 23:34:08] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[16/10/24 23:34:08] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[16/10/24 23:34:08] info: Program: Finished Squirrel Updater
+[04/11/24 10:23:04] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[04/11/24 10:23:04] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[04/11/24 10:23:05] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[04/11/24 10:23:05] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.18.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[04/11/24 10:23:05] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[04/11/24 10:23:05] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.18.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[04/11/24 10:23:05] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[04/11/24 10:23:05] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[04/11/24 10:23:05] info: Program: Finished Squirrel Updater
+[14/11/24 10:15:43] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[14/11/24 10:15:43] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[14/11/24 10:15:44] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[14/11/24 10:15:44] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.19.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[14/11/24 10:15:44] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[14/11/24 10:15:44] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.19.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[14/11/24 10:15:44] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[14/11/24 10:15:44] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[14/11/24 10:15:44] info: Program: Finished Squirrel Updater
+[22/11/24 13:36:20] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[22/11/24 13:36:20] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[22/11/24 13:36:21] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[22/11/24 13:36:21] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.20.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[22/11/24 13:36:21] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[22/11/24 13:36:21] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.20.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[22/11/24 13:36:21] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[22/11/24 13:36:21] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[22/11/24 13:36:21] info: Program: Finished Squirrel Updater
+[26/11/24 19:28:35] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[26/11/24 19:28:35] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[26/11/24 19:28:35] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[26/11/24 19:28:35] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.21.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[26/11/24 19:28:35] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[26/11/24 19:28:35] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.21.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[26/11/24 19:28:35] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[26/11/24 19:28:35] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[26/11/24 19:28:35] info: Program: Finished Squirrel Updater
+[09/12/24 10:43:40] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[09/12/24 10:43:40] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[09/12/24 10:43:41] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[09/12/24 10:43:41] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.22.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[09/12/24 10:43:41] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[09/12/24 10:43:41] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.22.0, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[09/12/24 10:43:41] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[09/12/24 10:43:41] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[09/12/24 10:43:41] info: Program: Finished Squirrel Updater
+[29/12/24 16:42:46] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[29/12/24 16:42:46] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[29/12/24 16:42:47] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[29/12/24 16:42:47] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.23.3, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[29/12/24 16:42:47] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[29/12/24 16:42:47] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.23.3, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[29/12/24 16:42:47] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[29/12/24 16:42:47] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[29/12/24 16:42:47] info: Program: Finished Squirrel Updater
+[14/01/25 08:49:34] info: Program: Starting Squirrel Updater: --createShortcut=Postman.exe --shortcut-locations=StartMenu,Desktop
+[14/01/25 08:49:34] info: ApplyReleasesImpl: About to create shortcuts for Postman.exe, rootAppDir C:\Users\gusta\AppData\Local\Postman\
+[14/01/25 08:49:35] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk
+[14/01/25 08:49:35] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Postman\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.27.3, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[14/01/25 08:49:35] info: ApplyReleasesImpl: Creating shortcut for Postman.exe => C:\Users\gusta\Desktop\Postman.lnk
+[14/01/25 08:49:35] info: ApplyReleasesImpl: About to save shortcut: C:\Users\gusta\Desktop\Postman.lnk (target C:\Users\gusta\AppData\Local\Postman\Postman.exe, workingDir C:\Users\gusta\AppData\Local\Postman\app-11.27.3, args , toastActivatorCSLID d56d0ae8-2c2a-5b45-bd3b-9973bc69da9e)
+[14/01/25 08:49:35] info: ApplyReleasesImpl: Examining Pin: File Explorer.lnk
+[14/01/25 08:49:35] info: ApplyReleasesImpl: Examining Pin: Microsoft Edge.lnk
+[14/01/25 08:49:35] info: Program: Finished Squirrel Updater

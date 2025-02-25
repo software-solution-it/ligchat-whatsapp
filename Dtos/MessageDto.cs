@@ -12,6 +12,8 @@
 
         public string Recipient { get; set; } // Número de telefone do destinatário
 
+        public string RecipientPhone { get; set; }  // Nova propriedade
+
         public int ContactId { get; set; } // ID do contato associado à mensagem
     }
 

@@ -1,0 +1,1802 @@
+{
+	"info": {
+		"_postman_id": "bb9c7c33-3276-4222-9783-72aa16389f99",
+		"name": "BitDefender",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14127678"
+	},
+	"item": [
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "Account List",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "Get Companies",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getCompanyDetails\",\n    \"params\": {},\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/companies/getCompanyDetails",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"companies",
+								"getCompanyDetails"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Incidents",
+			"item": [
+				{
+					"name": "getBlockListItem",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "License",
+			"item": [
+				{
+					"name": "GetLicenseInfo",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getLicenseInfo\",\n    \"params\": {},\n    \"id\": \"ad12cb61-52b3-4209-a87a-93a8530d91cb\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/licensing/getLicenseInfo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"licensing",
+								"getLicenseInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetMonthlyUsage",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getMonthlyUsage\",\n    \"params\": {\n      \"targetMonth\": \"03/2024\"\n    },\n    \"id\": \"5087eab8-b74f-4a3e-85b3-4271e85890d4\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/licensing/getMonthlyUsage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"licensing",
+								"getMonthlyUsage"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Network",
+			"item": [
+				{
+					"name": "createScanTask",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createScanTask\",\n    \"params\": {\n      \"targetIds\": [\n        \"559bd17ab1a43d241b7b23c6\",\n        \"559bd17ab1a43d241b7b23c7\"\n      ],\n      \"type\": 1,\n      \"name\": \"my scan\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/createScanTask",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"createScanTask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getEndpointsList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getEndpointsList\",\n    \"params\": {\n      \"parentId\": \"23b19c39b1a43d89367b32ce\",\n      \"page\": 1,\n      \"perPage\": 30,\n      \"filters\": {\n        \"security\": {\n          \"management\": {\n            \"managedWithBest\": true\n          }\n        }\n      }\n    },\n    \"id\": \"301f7b05-ec02-481b-9ed6-c07b97de2b7b\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/getEndpointsList",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"getEndpointsList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getManagedEndpointDetails",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getManagedEndpointDetails\",\n    \"params\": {\n      \"endpointId\": \"54a28b41b1a43d89367b23fd\"\n    },\n    \"id\": \"301f7b05-ec02-481b-9ed6-c07b97de2b7b\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/getManagedEndpointDetails",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"getManagedEndpointDetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCustomGroupsList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getCustomGroupsList\",\n    \"params\": {\n      \"parentId\": \"5582c0acb1a43d9f7f7b23c6\"\n    },\n    \"id\": \"9600512e-4e89-438a-915d-1340c654ae34\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/getCustomGroupsList",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"getCustomGroupsList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getNetworkInventoryItems",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getNetworkInventoryItems\",\n    \"params\": {\n      \"parentId\": \"23b19c39b1a43d89367b32ce\",\n      \"page\": 1,\n      \"perPage\": 30,\n      \"filters\": {\n        \"type\": {\n          \"computers\": true\n        },\n        \"depth\": {\n          \"allItemsRecursively\": true\n        }\n      }\n    },\n    \"id\": \"301f7b05-ec02-481b-9ed6-c07b97de2b7b\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/getNetworkInventoryItems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"getNetworkInventoryItems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getScanTasksList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getScanTasksList\",\n    \"params\": {\n      \"status\": 1,\n      \"page\": 1,\n      \"perPage\": 30\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/getScanTasksList",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"getScanTasksList"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Packages",
+			"item": [
+				{
+					"name": "getInstallationLinks",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getInstallationLinks\",\n    \"params\": {\n      \"packageName\": \"my package\"\n    },\n    \"id\": \"426db9bb-e92a-4824-a21b-bba6b62d0a18\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/packages/getInstallationLinks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"packages",
+								"getInstallationLinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPackagesList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getPackagesList\",\n    \"params\": {\n      \"page\": 1,\n      \"perPage\": 5\n    },\n    \"id\": \"696e1024-f94b-496a-9394-bee58b73c51f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/packages/getPackagesList",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"packages",
+								"getPackagesList"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Policy",
+			"item": [
+				{
+					"name": "getPoliciesList",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getPolicyDetails",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getPolicyDetails\",\n    \"params\": {\n      \"policyId\": \"55828d66b1a43de92c712345\"\n    },\n    \"id\": \"98409cc1-93cc-415a-9f77-1d4f681000b3\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/policies/getPolicyDetails",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"policies",
+								"getPolicyDetails"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Integration",
+			"item": [
+				{
+					"name": "getHourlyUsageForAmazonEC2Instances",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getHourlyUsageForAmazonEC2Instances\",\n    \"params\": {\n      \"targetMonth\": \"03/2024\"\n    },\n    \"id\": \"5087eab8-b74f-4a3e-85b3-4271e85890d4\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/integrations/getHourlyUsageForAmazonEC2Instances",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"integrations",
+								"getHourlyUsageForAmazonEC2Instances"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAmazonEC2ExternalIdForCrossAccountRole",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getAmazonEC2ExternalIdForCrossAccountRole\",\n    \"params\": {},\n    \"id\": \"5c6df60c-786a-4ea3-8ff3-b6e52b42aa46\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/integrations/getAmazonEC2ExternalIdForCrossAccountRole",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"integrations",
+								"getAmazonEC2ExternalIdForCrossAccountRole"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Push",
+			"item": [
+				{
+					"name": "getPushEventSettings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getPushEventSettings\",\n    \"params\": {},\n    \"id\": \"ad12cb61-52b3-4209-a87a-93a8530d91cb\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/push/getPushEventSettings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"push",
+								"getPushEventSettings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPushEventStats",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getPushEventStats\",\n    \"params\": {},\n    \"id\": \"ad12cb61-52b3-4209-a87a-93a8530d91cb\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/push/getPushEventStats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"push",
+								"getPushEventStats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sendTestPushEvent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"sendTestPushEvent\",\n    \"params\": {\n      \"eventType\": \"av\",\n      \"data\": {\n        \"malware_name\": \"Test malware name\"\n      }\n    },\n    \"id\": \"ad12cb61-52b3-4209-a87a-93a8530d91cb\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/push/sendTestPushEvent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"push",
+								"sendTestPushEvent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Quarantine",
+			"item": [
+				{
+					"name": "getBlocklistItems",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getBlocklistItems\",\n    \"params\": {\n      \"page\": 1,\n      \"perPage\": 30\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/getBlocklistItems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"getBlocklistItems"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "getReportsList",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getReportsList\",\n    \"params\": {\n      \"type\": 8,\n      \"page\": 1,\n      \"perPage\": 30\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/reports/getReportsList",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"reports",
+								"getReportsList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDownloadLinks",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getDownloadLinks\",\n    \"params\": {\n      \"reportId\": \"5638d7f8b1a43d49137b23c9\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/reports/getDownloadLinks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"reports",
+								"getDownloadLinks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sync",
+			"item": [
+				{
+					"name": "List Machine Data",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Sync Data",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Not for use",
+			"item": [
+				{
+					"name": "http://localhost/accounts/createAccount",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"createAccount\",\r\n    \"params\": {\r\n      \"name\": \"Test Account\",\r\n      \"email\": \"test@example.com\",\r\n      \"id\": 1\r\n    }\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/accounts/createAccount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"accounts",
+								"createAccount"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost/accounts/createAccount\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"createAccount\",\r\n    \"params\": {\r\n      \"name\": \"Test Account\",\r\n      \"email\": \"test@example.com\",\r\n      \"id\": 1\r\n    }\r\n  }'"
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost/accounts/createAccount Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"updateAccount\",\n    \"params\": {\n      \"accountId\": \"123\",\n      \"name\": \"Updated Account\",\n      \"email\": \"updated@example.com\",\n      \"id\": 1\n    }\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/accounts/updateAccount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"accounts",
+								"updateAccount"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost/accounts/createAccount\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"createAccount\",\r\n    \"params\": {\r\n      \"name\": \"Test Account\",\r\n      \"email\": \"test@example.com\",\r\n      \"id\": 1\r\n    }\r\n  }'"
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost/accounts/createAccount Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deleteAccount\",\n    \"params\": {\n      \"accountId\": \"123\",\n      \"id\": 1\n    }\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/accounts/deleteAccount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"accounts",
+								"deleteAccount"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost/accounts/createAccount\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"createAccount\",\r\n    \"params\": {\r\n      \"name\": \"Test Account\",\r\n      \"email\": \"test@example.com\",\r\n      \"id\": 1\r\n    }\r\n  }'"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Companies",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"updateCompanyDetails\",\n    \"params\": {\n      \"name\": \"Example LTD\",\n      \"address\": \"Str Example No 1\",\n      \"phone\": \"0040740000001\"\n    },\n    \"id\": \"60357f0e-94da-463c-ba36-f50f2ef8c34f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/companies/updateCompanyDetails",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"companies",
+								"updateCompanyDetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddToBlockList",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"addToBlocklist\",\n    \"params\": {\n      \"hashType\": 2,\n      \"hashList\": [\n        \"5b7ac19bb1a43dfb107b23c6\",\n        \"f696282aa4cd4f614aa995190cf442fe\"\n      ],\n      \"sourceInfo\": \"Added from public API\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/addToBlocklist",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"addToBlocklist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteFromBlockList",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"removeFromBlocklist\",\n    \"params\": {\n      \"hashItemId\": \"5b680f6fb1a43d860a7b23c1\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/removeFromBlocklist",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"removeFromBlocklist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateIsolateEndpointTask",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createIsolateEndpointTask\",\n    \"params\": {\n      \"endpointId\": \"5b680f6fb1a43d860a7b23c1\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/createIsolateEndpointTask",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"createIsolateEndpointTask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateRestoreEndpointFromIsolationTask",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createIsolateEndpointTask\",\n    \"params\": {\n      \"endpointId\": \"5b680f6fb1a43d860a7b23c1\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/createIsolateEndpointTask",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"createIsolateEndpointTask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SetLicenseKey",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"setLicenseKey\",\n    \"params\": {\n      \"licenseKey\": \"TNB3AAA\"\n    }\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/licensing/setLicenseKey",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"licensing",
+								"setLicenseKey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createCustomGroup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createCustomGroup\",\n    \"params\": {\n      \"groupName\": \"myGroup\",\n      \"parentId\": \"5582c0acb1a43d9f7f7b23c6\"\n    },\n    \"id\": \"9600512e-4e89-438a-915d-1340c654ae34\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/createCustomGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"createCustomGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteCustomGroup",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deleteCustomGroup\",\n    \"params\": {\n      \"groupId\": \"559bd17ab1a43d241b7b23c6\",\n      \"force\": true\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/deleteCustomGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"deleteCustomGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "moveEndpoints",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"moveEndpoints\",\n    \"params\": {\n      \"endpointIds\": [\n        \"559bd152b1a43d291b7b23d8\",\n        \"559bd152b1a43d291b7b2430\"\n      ],\n      \"groupId\": \"559bd17ab1a43d241b7b23c6\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/moveEndpoints",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"moveEndpoints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "moveCustomGroup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"moveCustomGroup\",\n    \"params\": {\n      \"groupId\": \"559bd17ab1a43d241b7b23c6\",\n      \"parentId\": \"559bd17ab1a85d241b7b23c6\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/moveCustomGroup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"moveCustomGroup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setEndpointLabel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"setEndpointLabel\",\n    \"params\": {\n      \"endpointId\": \"5a30e7730041d70cc09f244b\",\n      \"label\": \"My Test Endpoint\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/setEndpointLabel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"setEndpointLabel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createPackage",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createPackage\",\n    \"params\": {\n      \"packageName\": \"a unique name\",\n      \"description\": \"package description\",\n      \"language\": \"en_EN\",\n      \"modules\": {\n        \"atc\": 1,\n        \"firewall\": 0,\n        \"contentControl\": 1,\n        \"deviceControl\": 0,\n        \"powerUser\": 0\n      },\n      \"scanMode\": {\n        \"type\": 2,\n        \"computers\": {\"main\": 1, \"fallback\": 2},\n        \"vms\": {\"main\": 2},\n        \"ec2\": {\"main\": 1, \"fallback\": 2}\n      },\n      \"settings\": {\n        \"uninstallPassword\": \"mys3cre3tP@assword\",\n        \"scanBeforeInstall\": 0,\n        \"customInstallationPath\": \"c:\\\\mypath\\\\bitdefender\",\n        \"customGroupId\": \"5a4dff50b1a43ded0a7b23c8\"\n      },\n      \"roles\": {\n        \"relay\": 0,\n        \"exchange\": 1\n      },\n      \"deploymentOptions\": {\n        \"type\": 2,\n        \"relayId\": \"54a1a1s3b1a43e2b347s23c1\",\n        \"useCommunicationProxy\": true,\n        \"proxyServer\": \"10.12.13.14\",\n        \"proxyPort\": 123\n      }\n    },\n    \"id\": \"426db9bb-e92a-4824-a21b-bba6b62d0a18\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/packages/createPackage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"packages",
+								"createPackage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletePackage",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deletePackage\",\n    \"params\": {\n      \"packageId\": \"5a37b660b1a43d99117b23c6\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/packages/deletePackage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"packages",
+								"deletePackage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "configureAmazonEC2IntegrationUsingCrossAccountRole",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"configureAmazonEC2IntegrationUsingCrossAccountRole\",\n    \"params\": {\n      \"crossAccountRoleArn\": \"arn:aws:iam::111222345123:role/test\"\n    },\n    \"id\": \"5c6df60c-786a-4ea3-8ff3-b6e52b42aa46\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/integrations/configureAmazonEC2IntegrationUsingCrossAccountRole",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"integrations",
+								"configureAmazonEC2IntegrationUsingCrossAccountRole"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generateAmazonEC2ExternalIdForCrossAccountRole",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"generateAmazonEC2ExternalIdForCrossAccountRole\",\n    \"id\": \"5c6df60c-786a-4ea3-8ff3-b6e52b42aa46\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/integrations/generateAmazonEC2ExternalIdForCrossAccountRole",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"integrations",
+								"generateAmazonEC2ExternalIdForCrossAccountRole"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "disableAmazonEC2Integration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"disableAmazonEC2Integration\",\n    \"params\": {},\n    \"id\": \"97114e95-f36b-4206-bca0-6fb41bb47575\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/integrations/disableAmazonEC2Integration",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"integrations",
+								"disableAmazonEC2Integration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setPushEventSettings",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"setPushEventSettings\",\n    \"params\": {\n      \"status\": 1,\n      \"serviceType\": \"jsonRPC\",\n      \"serviceSettings\": {\n        \"url\": \"http://example.com\",\n        \"requireValidSslCertificate\": true\n      },\n      \"subscribeToEventTypes\": {\n        \"modules\": true,\n        \"sva\": true,\n        \"registration\": true,\n        \"supa-update-status\": true,\n        \"av\": true,\n        \"aph\": true,\n        \"fw\": true,\n        \"avc\": true,\n        \"uc\": true,\n        \"dp\": true,\n        \"sva-load\": true,\n        \"task-status\": true,\n        \"exchange-malware\": true,\n        \"network-sandboxing\": true,\n        \"adcloud\": true,\n        \"exchange-user-credentials\": true\n      }\n    },\n    \"id\": \"ad12cb61-52b3-4209-a87a-93a8530d91cb\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/push/setPushEventSettings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"push",
+								"setPushEventSettings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resetPushEventStats",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"resetPushEventStats\",\n    \"params\": {},\n    \"id\": \"ad12cb61-52b3-4209-a87a-93a8530d91cb\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/push/resetPushEventStats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"push",
+								"resetPushEventStats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addToBlocklist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"addToBlocklist\",\n    \"params\": {\n      \"hashType\": 2,\n      \"hashList\": [\"d41d8cd98f00b204e9800998ecf8427e\"],\n      \"sourceInfo\": \"Added from public API\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/addToBlocklist",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"addToBlocklist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removeFromBlocklist",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"removeFromBlocklist\",\n    \"params\": {\n      \"hashItemId\": \"67720f9d87a774fca2053f98\"\n    }\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/removeFromBlocklist",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"removeFromBlocklist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createIsolateEndpointTask",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createIsolateEndpointTask\",\n    \"params\": {\n      \"endpointId\": \"634084f211657b7c23dd786b\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/createIsolateEndpointTask",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"createIsolateEndpointTask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createRestoreEndpointFromIsolationTask",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createRestoreEndpointFromIsolationTask\",\n    \"params\": {\n      \"endpointId\": \"634084f211657b7c23dd786b\"\n    },\n    \"id\": \"0df7568c-59c1-48e0-a31b-18d83e6d9810\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/incidents/createRestoreEndpointFromIsolationTask",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"incidents",
+								"createRestoreEndpointFromIsolationTask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createReport",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"createReport\",\n    \"params\": {\n      \"name\": \"My Report daily\",\n      \"type\": 8,\n      \"targetIds\": [\"559bd17ab1a43d241b7b23c6\"],\n      \"scheduledInfo\": {\n        \"occurrence\": 3,\n        \"startHour\": 10,\n        \"startMinute\": 30\n      },\n      \"options\": {\n        \"filterType\": 1,\n        \"antivirusOn\": true,\n        \"antivirusOff\": false,\n        \"updated\": true,\n        \"disabled\": false,\n        \"outdated\": false,\n        \"online\": false,\n        \"offline\": true\n      }\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/reports/createReport",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"reports",
+								"createReport"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteReport",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deleteReport\",\n    \"params\": {\n      \"reportId\": \"5638d7f8b1a43d49137b23c9\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/reports/deleteReport",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"reports",
+								"deleteReport"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteEndpoint",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deleteEndpoint\",\n    \"params\": {\n      \"endpointId\": \"559bd152b1a43d291b7b23d8\"\n    },\n    \"id\": \"787b5e36-89a8-4353-88b9-6b7a32e9c87f\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/network/deleteEndpoint",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"network",
+								"deleteEndpoint"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -5,23 +5,49 @@ using WhatsAppProject.Dtos; // Importar o namespace dos DTOs
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace WhatsAppProject.Services
 {
     public class ContactService
     {
         private readonly WhatsAppContext _context;
+        private readonly ILogger<ContactService> _logger;
 
-        public ContactService(WhatsAppContext context)
+        public ContactService(WhatsAppContext context, ILogger<ContactService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<List<Contacts>> GetContactsBySectorIdAsync(int sectorId)
         {
-            return await _context.Contacts
-                .Where(c => c.SectorId == sectorId)
-                .ToListAsync();
+            try
+            {
+                var contacts = await _context.Contacts
+                    .Where(c => c.SectorId == sectorId)
+                    .Select(c => new Contacts
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        PhoneNumber = c.PhoneNumber,
+                        ProfilePictureUrl = c.ProfilePictureUrl,
+                        SectorId = c.SectorId,
+                        TagIds = c.TagIds,
+                        Status = c.Status,
+                        Address = c.Address,
+                        Email = c.Email,
+                        Annotations = c.Annotations
+                    })
+                    .ToListAsync();
+
+                return contacts ?? new List<Contacts>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao buscar contatos: {ex.Message}");
+                return new List<Contacts>();
+            }
         }
 
         public async Task<List<Contacts>> GetContactsByTagIdAsync(string tagId)

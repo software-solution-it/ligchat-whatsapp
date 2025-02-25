@@ -1,0 +1,60 @@
+2025-02-25 13:56:06.882 -03:00 [INF] Start installing Hangfire SQL objects...
+2025-02-25 13:56:07.574 -03:00 [INF] Hangfire SQL objects installed.
+2025-02-25 13:56:11.277 -03:00 [INF] Iniciando aplicação
+2025-02-25 13:56:11.349 -03:00 [WRN] Overriding address(es) 'http://localhost:5001'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-02-25 13:56:11.364 -03:00 [INF] Now listening on: http://localhost:5001
+2025-02-25 13:56:11.368 -03:00 [INF] Starting Hangfire Server using job storage: 'Server: ligchat.cmj46oa0g26n.us-east-1.rds.amazonaws.com@ligchat'
+2025-02-25 13:56:11.369 -03:00 [INF] Using the following options for SQL Server job storage:
+2025-02-25 13:56:11.369 -03:00 [INF]     Queue poll interval: 00:00:15.
+2025-02-25 13:56:11.370 -03:00 [INF] Using the following options for Hangfire Server:
+    Worker count: 1
+    Listening queues: 'default'
+    Shutdown timeout: 00:00:15
+    Schedule polling interval: 00:00:15
+2025-02-25 13:56:11.376 -03:00 [DBG] Execution loop BackgroundServerProcess:9e9b4120 has started in 3,0476 ms
+2025-02-25 13:56:11.378 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-02-25 13:56:11.379 -03:00 [INF] Hosting environment: Development
+2025-02-25 13:56:11.380 -03:00 [INF] Content root path: C:\Users\gusta\Videos\Projetos\LigChat\ligchat-whatsapp
+2025-02-25 13:56:11.673 -03:00 [INF] Server softsnov:22136:8d2307fc successfully announced in 294,0219 ms
+2025-02-25 13:56:11.675 -03:00 [DBG] Execution loop ServerHeartbeatProcess:da6dae41 has started in 0,758 ms
+2025-02-25 13:56:11.675 -03:00 [INF] Server softsnov:22136:8d2307fc is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, Worker, DelayedJobScheduler, RecurringJobScheduler...
+2025-02-25 13:56:11.676 -03:00 [DBG] Execution loop ServerWatchdog:c68b3e23 has started in 0,1278 ms
+2025-02-25 13:56:11.676 -03:00 [DBG] Execution loop ServerJobCancellationWatcher:f8d204b9 has started in 0,1355 ms
+2025-02-25 13:56:11.677 -03:00 [DBG] Execution loop ExpirationManager:88b13c74 has started in 0,2212 ms
+2025-02-25 13:56:11.677 -03:00 [DBG] Execution loop CountersAggregator:3cccc278 has started in 0,1269 ms
+2025-02-25 13:56:11.677 -03:00 [DBG] Execution loop Worker:dc0474a0 has started in 0,2014 ms
+2025-02-25 13:56:11.677 -03:00 [DBG] Execution loop DelayedJobScheduler:ebb18b11 has started in 0,151 ms
+2025-02-25 13:56:11.677 -03:00 [INF] Server softsnov:22136:8d2307fc all the dispatchers started
+2025-02-25 13:56:11.677 -03:00 [DBG] Execution loop RecurringJobScheduler:189a9272 has started in 0,1143 ms
+2025-02-25 13:56:11.679 -03:00 [DBG] Removing outdated records from table 'AggregatedCounter'...
+2025-02-25 13:56:11.679 -03:00 [DBG] Aggregating records in 'Counter' table...
+2025-02-25 13:56:12.516 -03:00 [DBG] delete from `AggregatedCounter` where ExpireAt < @now limit @count;
+2025-02-25 13:56:12.935 -03:00 [DBG] removed records count=0
+2025-02-25 13:56:12.936 -03:00 [DBG] Removing outdated records from table 'Job'...
+2025-02-25 13:56:13.072 -03:00 [DBG] delete from `Job` where ExpireAt < @now limit @count;
+2025-02-25 13:56:13.494 -03:00 [DBG] removed records count=0
+2025-02-25 13:56:13.494 -03:00 [DBG] Removing outdated records from table 'List'...
+2025-02-25 13:56:13.631 -03:00 [DBG] delete from `List` where ExpireAt < @now limit @count;
+2025-02-25 13:56:14.054 -03:00 [DBG] removed records count=0
+2025-02-25 13:56:14.055 -03:00 [DBG] Removing outdated records from table 'Set'...
+2025-02-25 13:56:14.192 -03:00 [DBG] delete from `Set` where ExpireAt < @now limit @count;
+2025-02-25 13:56:14.610 -03:00 [DBG] removed records count=0
+2025-02-25 13:56:14.611 -03:00 [DBG] Removing outdated records from table 'Hash'...
+2025-02-25 13:56:14.748 -03:00 [DBG] delete from `Hash` where ExpireAt < @now limit @count;
+2025-02-25 13:56:15.166 -03:00 [DBG] removed records count=0
+2025-02-25 13:56:34.087 -03:00 [DBG] Hangfire Server is stopping...
+2025-02-25 13:56:34.088 -03:00 [INF] Server softsnov:22136:8d2307fc caught stopping signal...
+2025-02-25 13:56:34.088 -03:00 [DBG] Execution loop CountersAggregator:3cccc278 stopped in 0,1278 ms
+2025-02-25 13:56:34.088 -03:00 [DBG] Execution loop RecurringJobScheduler:189a9272 stopped in 0,1539 ms
+2025-02-25 13:56:34.088 -03:00 [DBG] Execution loop DelayedJobScheduler:ebb18b11 stopped in 0,1664 ms
+2025-02-25 13:56:34.088 -03:00 [DBG] Execution loop ExpirationManager:88b13c74 stopped in 0,144 ms
+2025-02-25 13:56:34.088 -03:00 [DBG] Execution loop Worker:dc0474a0 stopped in 0,1878 ms
+2025-02-25 13:56:34.088 -03:00 [DBG] Execution loop ServerWatchdog:c68b3e23 stopped in 0,1794 ms
+2025-02-25 13:56:34.089 -03:00 [INF] Application is shutting down...
+2025-02-25 13:56:34.089 -03:00 [DBG] Execution loop ServerJobCancellationWatcher:f8d204b9 stopped in 0,5914 ms
+2025-02-25 13:56:34.093 -03:00 [INF] Server softsnov:22136:8d2307fc All dispatchers stopped
+2025-02-25 13:56:34.094 -03:00 [DBG] Execution loop ServerHeartbeatProcess:da6dae41 stopped in 0,0619 ms
+2025-02-25 13:56:34.096 -03:00 [DBG] Hangfire Server is stopping...
+2025-02-25 13:56:34.381 -03:00 [INF] Server softsnov:22136:8d2307fc successfully reported itself as stopped in 285,4635 ms
+2025-02-25 13:56:34.382 -03:00 [INF] Server softsnov:22136:8d2307fc has been stopped in total 293,1598 ms
+2025-02-25 13:56:34.382 -03:00 [DBG] Execution loop BackgroundServerProcess:9e9b4120 stopped in 294,0401 ms

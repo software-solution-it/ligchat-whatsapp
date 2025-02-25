@@ -12,11 +12,17 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Amazon.S3.Transfer;
 using Amazon.S3;
-using System.Text;
+using System.Text; 
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text.Json.Serialization; 
+using JsonSerializer = System.Text.Json.JsonSerializer;
+using Amazon.S3.Model;
 
 namespace WhatsAppProject.Services
 {
-    public class WebhookService
+    public class WebhookService  
     {
         private readonly ILogger<WebhookService> _logger;
         private readonly HttpClient _httpClient;
@@ -55,133 +61,232 @@ namespace WhatsAppProject.Services
             try
             {
                 _logger.LogInformation("Corpo do webhook recebido: {0}", body);
-
-
                 var payload = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
 
-                if (payload != null && payload.TryGetValue("entry", out var entryObj) && entryObj is Newtonsoft.Json.Linq.JArray entryArray && entryArray.Count > 0)
+                if (payload != null && payload.TryGetValue("entry", out var entryObj) && 
+                    entryObj is Newtonsoft.Json.Linq.JArray entryArray && entryArray.Count > 0)
                 {
                     var firstEntry = entryArray[0].ToObject<Dictionary<string, object>>();
 
-                    if (firstEntry.TryGetValue("changes", out var changesObj) && changesObj is Newtonsoft.Json.Linq.JArray changesArray && changesArray.Count > 0)
+                    if (firstEntry.TryGetValue("changes", out var changesObj) && 
+                        changesObj is Newtonsoft.Json.Linq.JArray changesArray && changesArray.Count > 0)
                     {
                         var firstChange = changesArray[0].ToObject<Dictionary<string, object>>();
 
-                        if (firstChange.TryGetValue("value", out var valueObj) && valueObj is Newtonsoft.Json.Linq.JObject changeValue)
+                        if (firstChange.TryGetValue("value", out var valueObj) && 
+                            valueObj is Newtonsoft.Json.Linq.JObject changeValue)
                         {
                             var metadata = changeValue["metadata"];
                             var phoneNumberId = metadata["phone_number_id"].ToString();
 
                             var credentials = await GetWhatsAppCredentialsByPhoneNumberIdAsync(phoneNumberId);
 
-                            int contactId = 0; 
-
-                            if (changeValue.TryGetValue("contacts", out var contactsObj) && contactsObj is Newtonsoft.Json.Linq.JArray contactsArray && contactsArray.Count > 0)
+                            // Processa mensagens primeiro
+                            if (changeValue.TryGetValue("messages", out var messagesObj) && 
+                                messagesObj is Newtonsoft.Json.Linq.JArray messagesArray && 
+                                messagesArray.Count > 0)
                             {
-                                var contactInfo = contactsArray[0].ToObject<Newtonsoft.Json.Linq.JObject>();
-                                var contactName = contactInfo["profile"]?["name"]?.ToString() ?? "Desconhecido";
-                                var contactWaId = contactInfo["wa_id"]?.ToString();
-
-                                if (!string.IsNullOrEmpty(contactWaId))
+                                var message = messagesArray[0].ToObject<Newtonsoft.Json.Linq.JObject>();
+                                
+                                // Obtém o contato
+                                int contactId = 0;
+                                if (changeValue.TryGetValue("contacts", out var contactsObj) && 
+                                    contactsObj is Newtonsoft.Json.Linq.JArray contactsArray && 
+                                    contactsArray.Count > 0)
                                 {
-                                    var contact = await GetOrCreateContactAsync(contactWaId, contactName, credentials.Id);
-                                    contactId = contact.Id; 
+                                    var contactInfo = contactsArray[0].ToObject<Newtonsoft.Json.Linq.JObject>();
+                                    var contactName = contactInfo["profile"]?["name"]?.ToString() ?? "Desconhecido";
+                                    var contactWaId = contactInfo["wa_id"]?.ToString();
+
+                                    if (!string.IsNullOrEmpty(contactWaId))
+                                    {
+                                        var contact = await GetOrCreateContactAsync(contactWaId, contactName, credentials.Id);
+                                        contactId = contact.Id;
+                                    }
                                 }
+
+                                // Processa a mensagem
+                                await ProcessReceivedMessage(message, credentials, contactId);
+                                return true;
                             }
 
-                            if (changeValue.TryGetValue("statuses", out var statusesObj) && statusesObj is Newtonsoft.Json.Linq.JArray statusesArray && statusesArray.Count > 0)
+                            // Processa status depois
+                            if (changeValue.TryGetValue("statuses", out var statusesObj) && 
+                                statusesObj is Newtonsoft.Json.Linq.JArray statusesArray && 
+                                statusesArray.Count > 0)
                             {
-                                await ProcessSentMessage(statusesArray[0].ToObject<Newtonsoft.Json.Linq.JObject>(), credentials);
-                            }
+                                var status = statusesArray[0].ToObject<Newtonsoft.Json.Linq.JObject>();
+                                
+                                // Se houver erros no status, loga mas não interrompe o processamento
+                                if (status.TryGetValue("errors", out var errorsToken))
+                                {
+                                    var errors = errorsToken as Newtonsoft.Json.Linq.JArray;
+                                    foreach (var error in errors)
+                                    {
+                                        var errorCode = error["code"]?.ToString();
+                                        var errorMessage = error["message"]?.ToString();
+                                        _logger.LogWarning($"Status com erro: Código {errorCode} - {errorMessage}");
+                                    }
+                                }
 
-                            if (changeValue.TryGetValue("messages", out var messagesObj) && messagesObj is Newtonsoft.Json.Linq.JArray messagesArray && messagesArray.Count > 0)
-                            {
-                                await ProcessReceivedMessage(messagesArray[0].ToObject<Newtonsoft.Json.Linq.JObject>(), credentials, contactId);
+                                await ProcessSentMessage(status, credentials);
+                                return true;
                             }
-
-                            return true; 
                         }
                     }
                 }
             }
-            catch (System.Text.Json.JsonException jsonEx)
+            catch (Exception ex)
             {
-                _logger.LogError("Erro ao processar JSON: {0}", jsonEx.Message);
+                _logger.LogError($"Erro ao processar webhook: {ex.Message}");
+            }
+
+            return false;
+        }
+
+        private Newtonsoft.Json.Linq.JToken GetMediaElement(Newtonsoft.Json.Linq.JObject message)
+        {
+            try
+            {
+                var messageType = message["type"]?.ToString()?.ToLower();
+                switch (messageType)
+                {
+                    case "image":
+                        return message["image"];
+                    case "video":
+                        return message["video"];
+                    case "audio":
+                    case "voice":
+                        return message["audio"] ?? message["voice"];
+                    case "document":
+                        return message["document"];
+                    default:
+                        return null;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Erro inesperado: {0}", ex.Message);
+                _logger.LogError($"Erro ao obter elemento de mídia: {ex.Message}");
+                return null;
             }
-
-            return false; 
         }
 
         private async Task ProcessReceivedMessage(Newtonsoft.Json.Linq.JObject message, Sector credentials, int contactId)
         {
-            string content = "Conteúdo desconhecido";
-            string mediaType = null;
-            string mediaUrl = null;
-
-            if (message.TryGetValue("text", out var textElement))
+            try
             {
-                content = textElement["body"]?.ToString() ?? content;
-                mediaType = "text";
+                string? content = null;
+                string? mediaType = null;
+                string? mediaUrl = null;
+                string? fileName = null;
+                string? mimeType = null;
+
+                var messageType = message["type"]?.ToString();
+                _logger.LogInformation($"Tipo de mensagem recebida: {messageType}");
+
+                // Handle text messages
+                if (messageType == "text" && message["text"] != null)
+                {
+                    content = message["text"]["body"]?.ToString();
+                    mediaType = "text";
+                }
+                // Handle media messages (audio, image, video, document)
+                else
+                {
+                    var mediaElement = GetMediaElement(message);
+                    if (mediaElement != null)
+                    {
+                        try
+                        {
+                            mediaType = DetermineMediaType(messageType);
+                            mimeType = mediaElement["mime_type"]?.ToString();
+                            fileName = mediaElement["filename"]?.ToString() ?? $"{mediaType}_{DateTime.UtcNow:yyyyMMddHHmmss}{GetFileExtension(mimeType)}";
+
+                            var mediaId = mediaElement["id"]?.ToString();
+                            _logger.LogInformation($"Processando mídia: Type={mediaType}, ID={mediaId}, MimeType={mimeType}");
+
+                            if (!string.IsNullOrEmpty(mediaId))
+                            {
+                                var mediaBytes = await GetMediaBytesFromWhatsApp(credentials, mediaId);
+                                if (mediaBytes != null)
+                                {
+                                    mediaUrl = await UploadToS3(mediaBytes, mediaType, mimeType, fileName);
+                                    _logger.LogInformation($"Mídia enviada para S3: {mediaUrl}");
+
+                                    // Para mensagens de documento, pegue a caption se existir
+                                    if (messageType == "document" && mediaElement["caption"] != null)
+                                    {
+                                        content = mediaElement["caption"].ToString();
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"Erro ao processar mídia: {ex.Message}");
+                            throw;
+                        }
+                    }
+                }
+
+                var newMessage = new Messages
+                {
+                    Content = content,
+                    MediaType = mediaType,
+                    MediaUrl = mediaUrl,
+                    FileName = fileName,
+                    MimeType = mimeType,
+                    ContactID = contactId,
+                    SectorId = credentials.Id,
+                    SentAt = DateTime.UtcNow,
+                    IsSent = false,
+                    IsRead = false
+                };
+
+                try
+                {
+                    _logger.LogInformation($"Salvando mensagem: {JsonConvert.SerializeObject(newMessage)}");
+                    await _context.Messages.AddAsync(newMessage);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation($"Mensagem salva com sucesso. ID: {newMessage.Id}");
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"Erro ao salvar mensagem no banco: {ex.Message}");
+                    _logger.LogError($"Inner exception: {ex.InnerException?.Message}");
+                    throw;
+                }
+
+                var messageData = new
+                {
+                    id = newMessage.Id,
+                    content = newMessage.Content,
+                    mediaType = mediaType,
+                    mediaUrl = mediaUrl,
+                    fileName = fileName,
+                    mimeType = mimeType,
+                    sectorId = newMessage.SectorId,
+                    contactID = newMessage.ContactID,
+                    sentAt = newMessage.SentAt,
+                    isSent = false,
+                    isRead = newMessage.IsRead,
+                    attachment = mediaUrl != null ? new
+                    {
+                        url = mediaUrl,
+                        type = mediaType,
+                        name = fileName
+                    } : null
+                };
+
+                await _webSocketManager.SendMessageToSectorAsync(credentials.Id.ToString(), messageData);
             }
-            else if (message.TryGetValue("image", out var imageElement))
+            catch (Exception ex)
             {
-                var (url, type) = await GetMediaDetails(credentials, imageElement["id"].ToString());
-                mediaUrl = url;
-                mediaType = type;
-                content = "";
+                _logger.LogError($"Erro ao processar mensagem: {ex.Message}");
+                _logger.LogError($"Stack trace: {ex.StackTrace}");
+                throw;
             }
-            else if (message.TryGetValue("document", out var documentElement))
-            {
-                var (url, type) = await GetMediaDetails(credentials, documentElement["id"].ToString());
-                mediaUrl = url;
-                mediaType = type;
-                content = "";
-            }
-            else if (message.TryGetValue("audio", out var audioElement))
-            {
-                var (url, type) = await GetMediaDetails(credentials, audioElement["id"].ToString());
-                mediaUrl = url;
-                mediaType = type;
-                content = "";
-            }
-
-            var newMessage = new Messages
-            {
-                Content = content,
-                MediaType = mediaType,
-                MediaUrl = mediaUrl,
-                ContactID = contactId, 
-                SectorId = credentials.Id,
-                SentAt = DateTime.UtcNow
-            };
-
-            await _context.Messages.AddAsync(newMessage);
-            await _context.SaveChangesAsync();
-
-            var messageDto = new MessageReceivedDto
-            {
-                Id = newMessage.Id,
-                Content = newMessage.Content,
-                MediaType = newMessage.MediaType,
-                MediaUrl = newMessage.MediaUrl,
-                ContactID = newMessage.ContactID,
-                SentAt = newMessage.SentAt,
-                IsSent = newMessage.IsSent
-            };
-
-            var messageJson = JsonConvert.SerializeObject(messageDto);
-
-            string sectorId = credentials.Id.ToString();
-
-            await TriggerWebhookEventAsync(credentials.Id, messageDto);
-
-            await _webSocketManager.SendMessageToSectorAsync(sectorId, messageJson);
         }
-        
 
         private async Task<Contacts> GetOrCreateContactAsync(string phoneNumber, string name, int sectorId)
         {
@@ -219,120 +324,153 @@ namespace WhatsAppProject.Services
             }
         }
 
-        public async Task<string> UploadMediaToS3Async(string base64File, string mediaType, string originalFileName)
-        {
-            var awsAccessKey = _configuration["AWS:AccessKey"];
-            var awsSecretKey = _configuration["AWS:SecretKey"];
-            var awsBucketName = _configuration["AWS:BucketName"];
-            var awsRegion = "us-east-2";
-
-            var s3Client = new AmazonS3Client(awsAccessKey, awsSecretKey, Amazon.RegionEndpoint.GetBySystemName(awsRegion));
-
-            var fileBytes = Convert.FromBase64String(base64File);
-
-
-            string fileHash = GenerateRandomHash();
-            string fileExtension = Path.GetExtension(originalFileName);
-            string fileName = $"{fileHash}{fileExtension}"; 
-
+        private async Task<byte[]> GetMediaBytesFromWhatsApp(Sector credentials, string mediaId)
+        { 
             try
             {
-                var transferUtility = new TransferUtility(s3Client);
+                _logger.LogInformation($"Iniciando download de mídia ID: {mediaId}");
+                
+                // 1. Obter informações da mídia
+                var mediaUrl = $"https://graph.facebook.com/v21.0/{mediaId}";
+                
+                using var request = new HttpRequestMessage(HttpMethod.Get, mediaUrl);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credentials.AccessToken);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                using (var memoryStream = new MemoryStream(fileBytes))
+                using var client = new HttpClient(new HttpClientHandler
                 {
-                    var fileTransferRequest = new TransferUtilityUploadRequest
-                    {
-                        BucketName = awsBucketName,
-                        Key = fileName,  
-                        InputStream = memoryStream, 
-                        ContentType = mediaType
-                    };
+                    AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+                });
 
-                    await transferUtility.UploadAsync(fileTransferRequest);
+                var mediaResponse = await client.SendAsync(request);
+                mediaResponse.EnsureSuccessStatusCode();
+
+                var mediaInfo = await mediaResponse.Content.ReadAsStringAsync();
+                _logger.LogInformation($"Informações da mídia: {mediaInfo}");
+                
+                var mediaData = JsonSerializer.Deserialize<WhatsAppMediaResponse>(mediaInfo);
+                
+                if (mediaData == null || string.IsNullOrEmpty(mediaData.Url))
+                {
+                    throw new Exception("Dados da mídia não encontrados na resposta");
                 }
 
-                var fileUrl = $"https://{awsBucketName}.s3.amazonaws.com/{fileName}";
+                // 2. Download da mídia
+                using var downloadRequest = new HttpRequestMessage(HttpMethod.Get, mediaData.Url);
+                downloadRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credentials.AccessToken);
+                downloadRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                downloadRequest.Headers.Add("User-Agent", "WhatsApp/2.0");
 
-                return fileUrl;
+                // Usar um novo HttpClient com configurações específicas para download
+                using var downloadClient = new HttpClient(new HttpClientHandler
+                {
+                    AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate,
+                    AllowAutoRedirect = true,
+                    MaxAutomaticRedirections = 10
+                });
+
+                downloadClient.Timeout = TimeSpan.FromMinutes(5); // Aumentar timeout para arquivos grandes
+
+                var downloadResponse = await downloadClient.SendAsync(downloadRequest);
+                downloadResponse.EnsureSuccessStatusCode();
+
+                var mediaBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
+
+                if (mediaBytes.Length == 0)
+                {
+                    throw new Exception("Download da mídia resultou em 0 bytes");
+                }
+
+                // Verificar se o tamanho está muito diferente do esperado
+                if (mediaData.FileSize > 0 && mediaBytes.Length < mediaData.FileSize * 0.9)
+                {
+                    _logger.LogWarning($"Tentando download novamente devido ao tamanho incorreto");
+                    
+                    // Segunda tentativa com configurações diferentes
+                    using var retryRequest = new HttpRequestMessage(HttpMethod.Get, mediaData.Url);
+                    retryRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credentials.AccessToken);
+                    retryRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaData.MimeType));
+                    retryRequest.Headers.Add("User-Agent", "WhatsApp/2.0");
+
+                    using var retryClient = new HttpClient(new HttpClientHandler
+                    {
+                        AutomaticDecompression = System.Net.DecompressionMethods.None,
+                        AllowAutoRedirect = true,
+                        MaxAutomaticRedirections = 10
+                    })
+                    {
+                        Timeout = TimeSpan.FromMinutes(5)
+                    };
+
+                    var retryResponse = await retryClient.SendAsync(retryRequest);
+                    retryResponse.EnsureSuccessStatusCode();
+
+                    var contentLength = retryResponse.Content.Headers.ContentLength;
+                    _logger.LogInformation($"Tamanho do conteúdo informado: {contentLength}");
+
+                    // Usar MemoryStream para garantir que todos os bytes sejam lidos
+                    using var ms = new MemoryStream();
+                    await retryResponse.Content.CopyToAsync(ms);
+                    mediaBytes = ms.ToArray();
+
+                    _logger.LogInformation($"Tamanho após segunda tentativa: {mediaBytes.Length}");
+                }
+
+                _logger.LogInformation($"Download concluído com sucesso. Tamanho final: {mediaBytes.Length} bytes");
+                
+                return mediaBytes;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao fazer upload para o S3: {ex.Message}");
+                _logger.LogError($"Erro ao obter mídia do WhatsApp: {ex.Message}");
+                throw;
             }
         }
 
-        private string GenerateRandomHash()
+        private string CalculateSha256(byte[] bytes)
         {
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(Guid.NewGuid().ToString());
-                byte[] hashBytes = sha256.ComputeHash(bytes);
-
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            }
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hash = sha256.ComputeHash(bytes);
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
 
-        private async Task<(string base64Image, string mediaType)> GetMediaDetails(Sector sector, string mediaId)
+        private class WhatsAppMediaResponse
         {
-            if (sector == null || string.IsNullOrEmpty(sector.AccessToken))
+            [JsonPropertyName("url")]
+            public string Url { get; set; }
+
+            [JsonPropertyName("mime_type")]
+            public string MimeType { get; set; }
+
+            [JsonPropertyName("sha256")]
+            public string Sha256 { get; set; }
+
+            [JsonPropertyName("file_size")]
+            public long FileSize { get; set; }
+
+            [JsonPropertyName("id")]
+            public string Id { get; set; }
+
+            [JsonPropertyName("messaging_product")]
+            public string MessagingProduct { get; set; }
+        }
+
+        private string GetMimeType(string extension)
+        {
+            return extension.ToLower() switch
             {
-                throw new Exception("Credenciais inválidas ou token de acesso ausente.");
-            }
-
-            string baseUrl = $"https://graph.facebook.com/v20.0/{mediaId}";
-
-            using (var request = new HttpRequestMessage(HttpMethod.Get, baseUrl))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", sector.AccessToken);
-
-                using (var response = await _httpClient.SendAsync(request))
-                {
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw new Exception($"Erro ao obter os detalhes da mídia: {response.ReasonPhrase}");
-                    }
-
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var mediaJson = JsonDocument.Parse(jsonResponse).RootElement;
-
-                    var mediaUrl = mediaJson.GetProperty("url").GetString();
-                    var mediaType = mediaJson.GetProperty("mime_type").GetString();
-
-                    if (string.IsNullOrEmpty(mediaUrl) || string.IsNullOrEmpty(mediaType))
-                    {
-                        throw new Exception("Detalhes da mídia não encontrados.");
-                    }
-
-                    using (var imageRequest = new HttpRequestMessage(HttpMethod.Get, mediaUrl))
-                    {
-                        imageRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", sector.AccessToken);
-                        imageRequest.Headers.UserAgent.ParseAdd("curl/7.64.1"); 
-
-                        using (var imageResponse = await _httpClient.SendAsync(imageRequest))
-                        {
-                            var contentType = imageResponse.Content.Headers.ContentType?.MediaType;
-                            if (!imageResponse.IsSuccessStatusCode || !(contentType.StartsWith("image/") || contentType.StartsWith("audio/") || contentType.StartsWith("application/")))
-                            {
-                                throw new Exception($"Erro ao baixar a mídia. Tipo MIME recebido: {contentType}");
-                            }
-
-                            var mediaBytes = await imageResponse.Content.ReadAsByteArrayAsync();
-
-                            if (mediaBytes == null || mediaBytes.Length == 0)
-                            {
-                                throw new Exception("Falha ao baixar o conteúdo da mídia.");
-                            }
-
-                            var mediaBase64 = Convert.ToBase64String(mediaBytes);
-
-                            var fileUrl = await UploadMediaToS3Async(mediaBase64, mediaType, "");
-
-                            return (fileUrl, mediaType);
-                        }
-                    }
-                }
-            }
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".pdf" => "application/pdf",
+                ".mp3" => "audio/mpeg",
+                ".mp4" => "video/mp4",
+                ".wav" => "audio/wav",
+                ".ogg" => "audio/ogg",
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                _ => "application/octet-stream"
+            };
         }
 
         /// <summary>
@@ -343,25 +481,234 @@ namespace WhatsAppProject.Services
         /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
         public async Task<bool> TriggerWebhookEventAsync(int sectorId, object eventData)
         {
-            // Recupera o webhook pelo sectorId
-            var webhook = await _saasContext.Webhooks.FirstOrDefaultAsync(w => w.SectorId == sectorId);
-            if (webhook == null || string.IsNullOrWhiteSpace(webhook.CallbackUrl))
+            try 
             {
-                return false; 
-            }
+                var message = JsonConvert.SerializeObject(eventData, new JsonSerializerSettings 
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    NullValueHandling = NullValueHandling.Ignore
+                });
 
-            var jsonData = JsonConvert.SerializeObject(eventData);
-            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            try
-            {
-                var response = await _httpClient.PostAsync(webhook.CallbackUrl, content);
-                return response.IsSuccessStatusCode;
+                _logger.LogInformation($"Enviando mensagem para setor {sectorId}: {message}");
+                
+                await _webSocketManager.SendMessageToSectorAsync(sectorId.ToString(), message);
+                
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Erro ao disparar o evento: {ex.Message}");
+                _logger.LogError($"Erro ao enviar mensagem WebSocket: {ex.Message}");
                 return false;
+            }
+        }
+
+        private string DetermineNormalizedMediaType(string mimeType)
+        {
+            if (string.IsNullOrEmpty(mimeType)) return "text";
+
+            var normalizedMimeType = mimeType.ToLower().Trim();
+            
+            _logger.LogInformation($"Determinando tipo de mídia para MIME: {normalizedMimeType}");
+
+            // Verifica primeiro por tipos específicos
+            if (normalizedMimeType.StartsWith("image/")) 
+            {
+                return "image";
+            }
+            if (normalizedMimeType.StartsWith("audio/") || normalizedMimeType.EndsWith(".ogg")) 
+            {
+                return "audio";
+            }
+            if (normalizedMimeType.StartsWith("video/")) 
+            {
+                return "video";
+            }
+
+            // Executáveis e documentos
+            if (normalizedMimeType.Contains("exe") || 
+                normalizedMimeType.Contains("x-msdownload") ||
+                normalizedMimeType.Contains("x-executable") ||
+                normalizedMimeType.Contains("application/octet-stream"))
+            {
+                return "document";
+            }
+
+            return "document";
+        }
+
+        private string DetermineFileExtension(string mimeType)
+        {
+            if (string.IsNullOrEmpty(mimeType))
+                return ".bin";
+
+            return mimeType.ToLower() switch
+            {
+                "image/jpeg" => ".jpg",
+                "image/jpg" => ".jpg",
+                "image/png" => ".png",
+                "image/gif" => ".gif",
+                "image/webp" => ".webp",
+                "audio/mp3" => ".mp3",
+                "audio/mpeg" => ".mp3",
+                "audio/ogg" => ".ogg",
+                "audio/wav" => ".wav",
+                "video/mp4" => ".mp4",
+                "video/mpeg" => ".mpeg",
+                "application/pdf" => ".pdf",
+                "application/msword" => ".doc",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => ".docx",
+                _ => mimeType.Contains("image/") ? ".jpg" : ".bin"
+            };
+        }
+
+        private string DetermineMediaType(string messageType)
+        {
+            if (string.IsNullOrEmpty(messageType))
+                return "text";
+
+            return messageType.ToLower() switch
+            {
+                "image" => "image",
+                "video" => "video",
+                "audio" => "audio",
+                "document" => "document",
+                "voice" => "audio",
+                "sticker" => "image",
+                _ => "text"
+            };
+        }
+
+        private string GetFileExtension(string mimeType)
+        {
+            if (string.IsNullOrEmpty(mimeType))
+                return ".bin";
+
+            return mimeType.ToLower() switch
+            {
+                "image/jpeg" => ".jpg",
+                "image/jpg" => ".jpg",
+                "image/png" => ".png",
+                "image/gif" => ".gif",
+                "image/webp" => ".webp",
+                "audio/mpeg" => ".mp3",
+                "audio/mp3" => ".mp3",
+                "audio/ogg" => ".ogg",
+                "audio/opus" => ".opus",
+                "audio/wav" => ".wav",
+                "video/mp4" => ".mp4",
+                "video/mpeg" => ".mpeg",
+                "application/pdf" => ".pdf",
+                "application/msword" => ".doc",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => ".docx",
+                _ => mimeType.StartsWith("image/") ? ".jpg" : ".bin"
+            };
+        }
+
+        private async Task<string> UploadToS3(byte[] mediaBytes, string mediaType, string mimeType, string fileName)
+        {
+            try
+            {
+                var bucketName = _configuration["AWS:BucketName"];
+                var s3Key = $"media/{mediaType}/{fileName}".Replace("//", "/").TrimStart('/');
+
+                var s3Config = new AmazonS3Config
+                {
+                    RegionEndpoint = Amazon.RegionEndpoint.USEast1,
+                    ForcePathStyle = true
+                };
+
+                using var client = new AmazonS3Client(
+                    _configuration["AWS:AccessKey"],
+                    _configuration["AWS:SecretKey"],
+                    s3Config
+                );
+
+                using var ms = new MemoryStream(mediaBytes);
+                
+                var uploadRequest = new TransferUtilityUploadRequest
+                {
+                    InputStream = ms,
+                    Key = s3Key,
+                    BucketName = bucketName,
+                    ContentType = mimeType,
+                    AutoCloseStream = true
+                };
+
+                // Adiciona metadados
+                uploadRequest.Metadata.Add("original-filename", fileName);
+                uploadRequest.Metadata.Add("media-type", mediaType);
+                uploadRequest.Metadata.Add("mime-type", mimeType);
+                uploadRequest.Metadata.Add("content-length", mediaBytes.Length.ToString());
+
+                var fileTransferUtility = new TransferUtility(client);
+                await fileTransferUtility.UploadAsync(uploadRequest);
+
+                var mediaUrl = $"https://{bucketName}.s3.amazonaws.com/{s3Key}";
+                _logger.LogInformation($"Arquivo salvo no S3: {mediaUrl}");
+                _logger.LogInformation($"Detalhes do upload: Filename={fileName}, MimeType={mimeType}, MediaType={mediaType}, Size={mediaBytes.Length}");
+
+                return mediaUrl;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao fazer upload para S3: {ex.Message}");
+                throw;
+            }
+        }
+
+        private async Task<Messages> SaveMessageToDatabase(string content, string mediaType, string mediaUrl, string fileName, string mimeType, int sectorId, int contactId)
+        {
+            try 
+            {
+                var message = new Messages
+                {
+                    Content = content ?? fileName ?? "Mídia sem descrição",
+                    MediaType = mediaType,
+                    MediaUrl = mediaUrl,
+                    FileName = fileName,
+                    MimeType = mimeType,
+                    SectorId = sectorId,
+                    ContactID = contactId,
+                    SentAt = DateTime.UtcNow,
+                    IsSent = true,
+                    IsRead = false
+                };
+
+                _logger.LogInformation($"Salvando mensagem: {JsonSerializer.Serialize(message)}");
+                
+                await _context.Messages.AddAsync(message);
+                await _context.SaveChangesAsync();
+
+                var messageData = new
+                {
+                    id = message.Id,
+                    content = message.Content,
+                    mediaType = message.MediaType,
+                    mediaUrl = message.MediaUrl,
+                    fileName = message.FileName,
+                    mimeType = message.MimeType,
+                    sectorId = message.SectorId,
+                    contactID = message.ContactID,
+                    sentAt = message.SentAt,
+                    isSent = message.IsSent,
+                    isRead = message.IsRead,
+                    attachment = message.MediaUrl != null ? new
+                    {
+                        url = message.MediaUrl,
+                        type = message.MediaType,
+                        name = message.FileName
+                    } : null
+                };
+
+                await _webSocketManager.SendMessageToSectorAsync(sectorId.ToString(), messageData);
+                
+                return message;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Erro ao salvar mensagem no banco: {ex.Message}");
+                _logger.LogError($"Inner exception: {ex.InnerException?.Message}");
+                throw;
             }
         }
     }

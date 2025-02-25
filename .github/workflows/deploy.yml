@@ -37,28 +37,16 @@ jobs:
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@3.90.210.19 '
-          echo "Iniciando o processo de implantação..." &&
-          echo "Diretório atual: $(pwd)" &&
-          echo "Mudando para o diretório do projeto..." &&
           cd /var/www/ligchat-whatsapp &&
-          echo "Configurando diretório seguro do Git..." &&
           git config --global --add safe.directory /var/www/ligchat-whatsapp &&
-          echo "Configurando informações do usuário do Git..." &&
           git config --global user.email "deploy@example.com" &&
           git config --global user.name "Deploy Bot" &&
-          echo "Verificando o status do repositório..." &&
-          git status &&
-          echo "Stash das alterações não comitadas..." &&
+          git stash &&
           git pull origin main &&
-          echo "Removendo arquivos de configuração antigos..." &&
           rm -f WhatsAppProject.deps.json &&
           rm -f WhatsAppProject.runtimeconfig.json &&
-          echo "Removendo arquivos de build antigos..." &&
           rm -rf obj/Release/net8.0/* &&
           rm -rf bin/Release/net8.0/* &&
-          echo "Publicando o projeto..." &&
           dotnet publish WhatsAppProject.csproj -c Release -o /var/www/ligchat-whatsapp/bin/Release/net8.0/ &&
-          echo "Reiniciando o serviço ligchat-whatsapp..." &&
-          systemctl restart ligchat-whatsapp.service &&
-          echo "Implantação concluída com sucesso!"
+          systemctl restart ligchat-whatsapp.service
         ' 

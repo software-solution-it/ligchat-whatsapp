@@ -36,7 +36,7 @@ jobs:
         
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no root@3.90.210.19 '
+        ssh -o StrictHostKeyChecking=no ubuntu@3.90.210.19 '
           cd /var/www/ligchat-whatsapp &&
           git config --global --add safe.directory /var/www/ligchat-whatsapp &&
           git config --global user.email "deploy@example.com" &&

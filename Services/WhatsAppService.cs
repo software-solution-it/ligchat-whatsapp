@@ -36,6 +36,9 @@ namespace WhatsAppProject.Services
             _configuration = configuration;
             _webSocketManager = webSocketManager;
             _logger = logger;
+
+            // Configurar o caminho do FFmpeg
+            FFmpeg.SetExecutablesPath("/usr/bin"); // Caminho para o executável do FFmpeg no Ubuntu
         }
 
         // Envia mensagem de texto
@@ -718,12 +721,12 @@ namespace WhatsAppProject.Services
                 await File.WriteAllBytesAsync(inputFile, audioBytes);
 
                 // Configurar FFmpeg
-                FFmpeg.SetExecutablesPath(@"C:\Program Files\ffmpeg\bin");
+                FFmpeg.SetExecutablesPath("/usr/bin");
                 
                 // Usar Process diretamente para ter mais controle sobre os argumentos
                 var processStartInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(@"C:\Program Files\ffmpeg\bin", "ffmpeg.exe"),
+                    FileName = Path.Combine("/usr/bin", "ffmpeg"),
                     Arguments = $"-i \"{inputFile}\" -c:a libopus -b:a 24k -ar 16000 -ac 1 -y \"{outputFile}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

@@ -2286,3 +2286,39 @@ FROM `mensagens_agendadas` AS `m`
 2025-02-25 17:04:34.056 -03:00 [INF] Server softsnov:28376:fa8587ca successfully reported itself as stopped in 291,3739 ms
 2025-02-25 17:04:34.057 -03:00 [INF] Server softsnov:28376:fa8587ca has been stopped in total 512,3638 ms
 2025-02-25 17:04:34.058 -03:00 [DBG] Execution loop BackgroundServerProcess:1d86150c stopped in 513,0627 ms
+2025-02-25 17:21:51.249 -03:00 [INF] Configurando entidade Messages
+2025-02-25 17:21:51.276 -03:00 [INF] Configurando entidade Contacts
+2025-02-25 17:21:51.278 -03:00 [INF] Configurando entidade MediaFile
+2025-02-25 17:21:51.345 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-02-25 17:21:51.445 -03:00 [INF] Configurando entidade Messages
+2025-02-25 17:21:51.445 -03:00 [INF] Configurando entidade Contacts
+2025-02-25 17:21:51.446 -03:00 [INF] Configurando entidade MediaFile
+2025-02-25 17:22:00.118 -03:00 [INF] Configurando entidade Messages
+2025-02-25 17:22:00.142 -03:00 [INF] Configurando entidade Contacts
+2025-02-25 17:22:00.143 -03:00 [INF] Configurando entidade MediaFile
+2025-02-25 17:22:00.204 -03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2025-02-25 17:22:02.374 -03:00 [INF] Executed DbCommand (149ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='ligchat' AND TABLE_NAME='__EFMigrationsHistory';
+2025-02-25 17:22:03.775 -03:00 [INF] Executed DbCommand (209ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE `__EFMigrationsHistory` (
+    `MigrationId` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
+    `ProductVersion` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK___EFMigrationsHistory` PRIMARY KEY (`MigrationId`)
+) CHARACTER SET=utf8mb4;
+2025-02-25 17:22:05.023 -03:00 [INF] Executed DbCommand (140ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='ligchat' AND TABLE_NAME='__EFMigrationsHistory';
+2025-02-25 17:22:05.306 -03:00 [INF] Executed DbCommand (142ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT `MigrationId`, `ProductVersion`
+FROM `__EFMigrationsHistory`
+ORDER BY `MigrationId`;
+2025-02-25 17:22:05.318 -03:00 [INF] Applying migration '20241019235159_NomeDaMigration'.
+2025-02-25 17:22:05.919 -03:00 [INF] Executed DbCommand (161ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER DATABASE CHARACTER SET utf8mb4;
+2025-02-25 17:22:06.060 -03:00 [ERR] Failed executing DbCommand (139ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE `media_files` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `url` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `media_type` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `uploaded_at` datetime(6) NOT NULL,
+    CONSTRAINT `PK_media_files` PRIMARY KEY (`id`)
+) CHARACTER SET=utf8mb4;

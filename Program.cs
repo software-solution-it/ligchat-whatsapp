@@ -38,6 +38,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
+// Configurar o caminho do FFmpeg
+FFmpeg.SetExecutablesPath("/usr/bin"); // Caminho para o executável do FFmpeg no Ubuntu
+
 builder.Services.AddDbContext<WhatsAppContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 26)),
@@ -140,12 +143,8 @@ builder.Services.AddScoped<WebhookService>();
 
 builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
 
-// Configurar FFmpeg
-string ffmpegPath = @"C:\Program Files\ffmpeg\bin";
-FFmpeg.SetExecutablesPath(ffmpegPath);
-
 // Registrar o caminho do FFmpeg na configuração para uso posterior
-builder.Configuration["FFmpeg:ExecutablesPath"] = ffmpegPath;
+builder.Configuration["FFmpeg:ExecutablesPath"] = "/usr/bin";
 
 // Adicionar SignalR
 builder.Services.AddSignalR();

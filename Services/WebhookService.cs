@@ -173,119 +173,92 @@ namespace WhatsAppProject.Services
 
         private async Task ProcessReceivedMessage(Newtonsoft.Json.Linq.JObject message, Sector credentials, int contactId)
         {
-            try
+            var messageType = message["type"].ToString();
+            var messageContent = messageType == "text" ? message["text"]?["body"]?.ToString() : messageType;
+
+            // Obter ou criar o estado do fluxo para o contato
+            var flowState = await GetOrCreateFlowStateAsync(contactId, "999a594ca604cf11f4e8e457"); // Substitua pelo ID do fluxo correto
+
+            // Obter o nó atual do fluxo
+            var currentNode = credentials.Flows.FirstOrDefault(n => n._id == flowState.CurrentNodeId);
+
+            if (currentNode != null)
             {
-                string? content = null;
-                string? mediaType = null;
-                string? mediaUrl = null;
-                string? fileName = null;
-                string? mimeType = null;
+                // Processar o nó atual
+                await ProcessNode(currentNode, credentials, contactId, messageContent);
 
-                var messageType = message["type"]?.ToString();
-                _logger.LogInformation($"Tipo de mensagem recebida: {messageType}");
-
-                // Handle text messages
-                if (messageType == "text" && message["text"] != null)
+                // Avançar para o próximo nó
+                var nextNode = GetNextNode(currentNode, messageContent);
+                if (nextNode != null)
                 {
-                    content = message["text"]["body"]?.ToString();
-                    mediaType = "text";
+                    await UpdateFlowStateAsync(flowState, nextNode._id);
+                    await ProcessNode(nextNode, credentials, contactId, messageContent);
                 }
-                // Handle media messages (audio, image, video, document)
-                else
-                {
-                    var mediaElement = GetMediaElement(message);
-                    if (mediaElement != null)
-                    {
-                        try
-                        {
-                            mediaType = DetermineMediaType(messageType);
-                            mimeType = mediaElement["mime_type"]?.ToString();
-                            fileName = mediaElement["filename"]?.ToString() ?? $"{mediaType}_{DateTime.UtcNow:yyyyMMddHHmmss}{GetFileExtension(mimeType)}";
-
-                            var mediaId = mediaElement["id"]?.ToString();
-                            _logger.LogInformation($"Processando mídia: Type={mediaType}, ID={mediaId}, MimeType={mimeType}");
-
-                            if (!string.IsNullOrEmpty(mediaId))
-                            {
-                                var mediaBytes = await GetMediaBytesFromWhatsApp(credentials, mediaId);
-                                if (mediaBytes != null)
-                                {
-                                    mediaUrl = await UploadToS3(mediaBytes, mediaType, mimeType, fileName);
-                                    _logger.LogInformation($"Mídia enviada para S3: {mediaUrl}");
-
-                                    // Para mensagens de documento, pegue a caption se existir
-                                    if (messageType == "document" && mediaElement["caption"] != null)
-                                    {
-                                        content = mediaElement["caption"].ToString();
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError($"Erro ao processar mídia: {ex.Message}");
-                            throw;
-                        }
-                    }
-                }
-
-                var newMessage = new Messages
-                {
-                    Content = content,
-                    MediaType = mediaType,
-                    MediaUrl = mediaUrl,
-                    FileName = fileName,
-                    MimeType = mimeType,
-                    ContactID = contactId,
-                    SectorId = credentials.Id,
-                    SentAt = DateTime.UtcNow,
-                    IsSent = false,
-                    IsRead = false
-                };
-
-                try
-                {
-                    _logger.LogInformation($"Salvando mensagem: {JsonConvert.SerializeObject(newMessage)}");
-                    await _context.Messages.AddAsync(newMessage);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation($"Mensagem salva com sucesso. ID: {newMessage.Id}");
-                }
-                catch (DbUpdateException ex)
-                {
-                    _logger.LogError($"Erro ao salvar mensagem no banco: {ex.Message}");
-                    _logger.LogError($"Inner exception: {ex.InnerException?.Message}");
-                    throw;
-                }
-
-                var messageData = new
-                {
-                    id = newMessage.Id,
-                    content = newMessage.Content,
-                    mediaType = mediaType,
-                    mediaUrl = mediaUrl,
-                    fileName = fileName,
-                    mimeType = mimeType,
-                    sectorId = newMessage.SectorId,
-                    contactID = newMessage.ContactID,
-                    sentAt = newMessage.SentAt,
-                    isSent = false,
-                    isRead = newMessage.IsRead,
-                    attachment = mediaUrl != null ? new
-                    {
-                        url = mediaUrl,
-                        type = mediaType,
-                        name = fileName
-                    } : null
-                };
-
-                await _webSocketManager.SendMessageToSectorAsync(credentials.Id.ToString(), messageData);
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError($"Erro ao processar mensagem: {ex.Message}");
-                _logger.LogError($"Stack trace: {ex.StackTrace}");
-                throw;
+                _logger.LogWarning($"Nó atual não encontrado para o contato {contactId}");
             }
+        }
+
+        private async Task ProcessNode(FlowNode currentNode, Sector credentials, int contactId, string messageContent)
+        {
+            foreach (var block in currentNode.blocks)
+            {
+                switch (block.type)
+                {
+                    case "text":
+                        await SendMessageAsync(new MessageDto
+                        {
+                            Content = block.content,
+                            SectorId = credentials.Id,
+                            ContactId = contactId
+                        });
+                        break;
+                    case "image":
+                        await SendFileAsync(new SendFileDto
+                        {
+                            MediaType = "image",
+                            Content = block.content,
+                            SectorId = credentials.Id,
+                            ContactId = contactId,
+                            Media = block.media
+                        });
+                        break;
+                    case "attachment":
+                        await SendFileAsync(new SendFileDto
+                        {
+                            MediaType = "document",
+                            Content = block.content,
+                            SectorId = credentials.Id,
+                            ContactId = contactId,
+                            Media = block.media
+                        });
+                        break;
+                    case "timer":
+                        // Adicionar lógica para esperar um tempo antes de avançar para o próximo nó
+                        await Task.Delay(TimeSpan.FromSeconds(block.duration));
+                        break;
+                }
+            }
+        }
+
+        private FlowNode GetNextNode(FlowNode currentNode, string messageContent)
+        {
+            var nextNodeId = currentNode.edges.FirstOrDefault(e => e.source == currentNode._id)?.target;
+            if (nextNodeId != null)
+            {
+                return credentials.Flows.FirstOrDefault(n => n._id == nextNodeId);
+            }
+
+            // Se houver uma condição, verificar se a mensagem atende à condição
+            if (currentNode.condition != null && currentNode.condition.condition == "contem" && messageContent.Contains(currentNode.condition.value))
+            {
+                return credentials.Flows.FirstOrDefault(n => n._id == currentNode.edges.FirstOrDefault(e => e.source == currentNode._id && e.sourceHandle == "true")?.target);
+            }
+
+            // Se a condição não for atendida, avançar para o nó de "false"
+            return credentials.Flows.FirstOrDefault(n => n._id == currentNode.edges.FirstOrDefault(e => e.source == currentNode._id && e.sourceHandle == "false")?.target);
         }
 
         private async Task<Contacts> GetOrCreateContactAsync(string phoneNumber, string name, int sectorId)
@@ -710,6 +683,32 @@ namespace WhatsAppProject.Services
                 _logger.LogError($"Inner exception: {ex.InnerException?.Message}");
                 throw;
             }
+        }
+
+        private async Task<FlowState> GetOrCreateFlowStateAsync(int contactId, string flowId)
+        {
+            var flowState = await _context.FlowStates.FirstOrDefaultAsync(fs => fs.ContactId == contactId && fs.FlowId == flowId);
+            if (flowState == null)
+            {
+                flowState = new FlowState
+                {
+                    ContactId = contactId,
+                    FlowId = flowId,
+                    CurrentNodeId = "1", // Inicia no primeiro nó
+                    LastUpdated = DateTime.UtcNow
+                };
+                await _context.FlowStates.AddAsync(flowState);
+                await _context.SaveChangesAsync();
+            }
+            return flowState;
+        }
+
+        private async Task UpdateFlowStateAsync(FlowState flowState, string nextNodeId)
+        {
+            flowState.CurrentNodeId = nextNodeId;
+            flowState.LastUpdated = DateTime.UtcNow;
+            _context.FlowStates.Update(flowState);
+            await _context.SaveChangesAsync();
         }
     }
 }

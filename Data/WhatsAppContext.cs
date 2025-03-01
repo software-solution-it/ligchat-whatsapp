@@ -22,6 +22,7 @@ namespace WhatsAppProject.Data
         public DbSet<Messages> Messages { get; set; }
         public DbSet<MediaFile> MediaFiles { get; set; }
         public DbSet<Contacts> Contacts { get; set; }
+        public DbSet<FlowState> FlowStates { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
